@@ -1,7 +1,14 @@
 import { Dispatch } from 'redux';
 import { jumpChanged, jumpCompleted } from './actions';
 
-export function JumpHandler(dispatch:Dispatch) {
+export interface JumpHandler {
+    jump: (id:string) => void,
+    sit: (id:string) => void,
+    set: () => void,
+    clear: () => void
+}
+
+export function CreateJumpHandler(dispatch:Dispatch) : JumpHandler {
     let isSet = false;
     let jumped = { };
     let latched = { };
@@ -17,7 +24,7 @@ export function JumpHandler(dispatch:Dispatch) {
         }
     }
     const sit = id => {
-        jumped[id] = false;
+        delete jumped[id];
         if(!isSet) {
             dispatch(jumpChanged(Object.keys(jumped)));
         }
@@ -40,4 +47,3 @@ export function JumpHandler(dispatch:Dispatch) {
     }
     return { jump, sit, set, clear };
 }
-

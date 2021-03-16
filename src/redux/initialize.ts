@@ -4,6 +4,7 @@ import { addDebugActions } from './debug-actions';
 import { TeamColor } from '../data/colors';
 import { shuffle, toLookup } from './utils';
 import { Client } from '../data/client';
+import { hookupKeyboardJumps } from './keyboard-jumps';
 
 export async function initialize(store) {
     const { getState, dispatch } = store;
@@ -26,4 +27,7 @@ export async function initialize(store) {
     const lineups:Lineup[] = teamIds.map(teamId => teams[teamId].defaultLineup);
     for(let i=0;i<3;i++) lineups[i].color = [TeamColor.blue, TeamColor.green, TeamColor.red][i];
     dispatch(updateLineups(lineups));
+
+    // add keyboard jump handler
+    hookupKeyboardJumps(getState);
 }

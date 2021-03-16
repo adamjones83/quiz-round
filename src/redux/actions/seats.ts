@@ -1,6 +1,6 @@
 import { createAction } from '@reduxjs/toolkit';
 import { Dispatch } from 'redux';
-import { JumpHandler } from '../jump-handler';
+import { CreateJumpHandler } from '../jump-handler';
 import { ActionReducerMapBuilder } from '@reduxjs/toolkit';
 import { Lineup } from '../../data/types';
 import { Map, Set, updateIn } from 'immutable';
@@ -26,7 +26,7 @@ export const swapQuizzers = createAction<{ lineupNum:number, seatA:number, seatB
 
 export function addSeatActions(builder:ActionReducerMapBuilder<Map<string,unknown>>) {
     builder
-        .addCase(setJumpHandler, (state, action) => state.set('jumpHandler', JumpHandler(action.payload)))
+        .addCase(setJumpHandler, (state, action) => state.set('jumpHandler', CreateJumpHandler(action.payload)))
         .addCase(enableSeat, (state,action) => updateIn(state, ['disabledSeats'], (disabledSeats:Set<string>) => disabledSeats.remove(action.payload)))
         .addCase(disableSeat, (state,action) => updateIn(state, ['disabledSeats'], (disabledSeats:Set<string>) => disabledSeats.add(action.payload)))
         .addCase(jumpChanged, (state, action) => state.set('jumped', Set(action.payload)))

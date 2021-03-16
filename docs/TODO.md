@@ -3,6 +3,7 @@
 ## HARDWARE/ENVIRONMENT
 - keyboard jump emulator
 - serial port (USB) based jump handler
+    * optional hardware-disable seats (allow for keyboard/virtual override)
 - virtual jumps via the internet (web sockets)?
 - hook up preload script for functions that use node functionality
 - data store for teams, players, lineups, round score history 
@@ -37,13 +38,20 @@
 - bonus: correct, error, cancel
 
 ## FEATURE IDEAS:
+- custom team colors
+- API endpoints to stream state
+    * configurable port #
+    * API key authentication
+    * configurable disable on startup
 - website view
     * state gets streamed to a website
     * scoresheet view
-    * scoreboard view (no action buttons, optional reverse team ordering)
+    * scoreboard view (no action buttons, no lineup popup, optional reverse team ordering)
 - bonus redirect: allow specifying which seat should get the bonus from a given seat
 - virtual jump seat: trigger a jump via a button on a website
+    * phone/tablet optimized view
 - delayed jump: put a X millisecond delay in the jump handler before dispatching actions
 - configurable correct before quiz out
 - configurable error before error out
 - randomized jump
+- phone/tablet view - team scores only, answering quizzer, admin popup

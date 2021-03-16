@@ -23,8 +23,8 @@ export const SeatView = connect(mapStateToProps)((props: SeatViewProps) => {
     const { seatNum, lineupNum, lineup, teamId, quizzers, jumped, disabled } = props;
     const seatId = `Team ${lineupNum} - Seat ${seatNum}`;
     const quizzerId = lineup.quizzerIds[seatNum];
-    const name = quizzers.get(quizzerId, { name: seatId }).name;
-    const isJumped = jumped.has(quizzerId);
+    const name = quizzers.get(quizzerId)?.abbrName || seatId;
+    const isJumped = jumped.has(seatId);
     const isEnabled = !disabled.has(seatId);
     const classes = ['seat'];
     if(isJumped) classes.push('jumped');

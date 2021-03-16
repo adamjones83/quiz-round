@@ -23,8 +23,24 @@ export const reducer = createReducer(defaultState, (builder:ActionReducerMapBuil
     addAdminActions(builder);
     addSeatActions(builder);
     addOtherActions(builder);
+    
+    // debug reducers - fire in addition to standard action handlers
+    // addAllActionsDebugReducer(builder);
+    // addJumpDebugReducer(builder);
+
+    // warn the console when non-matched actions occur
     builder.addDefaultCase((state, action) => {
         console.warn("No reducer matching the dispatched action", action);
         return state;
     });
 });
+
+function addAllActionsDebugReducer(builder) {
+    builder.addMatcher(action => true, (state,action) => { console.log({ action, state }); return state; });
+}
+function addJumpDebugReducer(builder) {
+    builder.addMatcher(action => action.type === 'JUMP_CHANGED', (state, action) => {
+        console.log("Jump changed", (state.get('jumped') as Set<string>).toJS());
+        return state;
+    })
+}
