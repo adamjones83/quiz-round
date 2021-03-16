@@ -1,0 +1,14 @@
+{
+  "compilerOptions": {
+    "target": "es5",
+    "downlevelIteration": true,
+    "module": "commonjs",
+    "sourceMap": false,
+    "declaration": false,
+    "outDir": "target",
+    "jsx": "react",
+    "lib": ["es2015", "dom"],
+    "moduleResolution": "node"
+  },
+  "files": ["src/main.ts", "src/preload.ts"]
+}

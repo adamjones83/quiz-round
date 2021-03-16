@@ -1,0 +1,120 @@
+:root {
+    --red-team: rgb(187, 37, 10);
+    --green-team: rgb(3, 151, 10);
+    --blue-team: rgb(2, 76, 214);
+}
+html, body, #react-mount, #react-mount>div {
+    margin: 0;
+    padding: 0;
+    width: 100%;
+    height: 100%;
+}
+.flex-row {
+    display:flex;
+    flex-direction: row;
+    align-items: stretch;  /* full height */
+}
+.flex-column { 
+    display:flex;
+    flex-direction: column;
+    align-items: stretch; /* full width */
+}
+
+/* ==> PARTS <== */
+.popup-outer {
+    margin: 0px;
+    width: 100%;
+    height: 100%;
+    display: none;
+    position: absolute;
+    background-color: #0003;
+}
+.popup-outer.visible {
+    display: block;
+}
+.popup-inner {
+    width: 600px;
+    min-height: 100px;
+    margin: auto;
+    background: #fff;
+    animation-name: fadein;
+    animation-duration: 200ms;
+    border: 3px solid #eee;
+    border-radius: 2px;
+    position: relative;
+    top: 300px;
+}
+@keyframes fadein {
+    from { background-color: #fff0; }
+    to { background-color: #ffff; }
+}
+
+.app {
+    height: 100%;
+    font-size: 4vh;
+}
+.round-title {
+    flex: 1;
+    font-weight: bold;
+    margin: 2px 10px;
+}
+.round-title div {
+    flex: 1;
+}
+.teams { 
+    flex: 15;
+}
+.actions {
+    flex: 2;
+    justify-content:space-around;
+    padding: 10px 10%;
+    text-align: center;
+    vertical-align: middle;
+}
+.actions>button {
+    width: 20%;
+    font-size:1em;
+}
+.team { 
+    flex: 1 1;
+}
+.team-name {
+    flex: 2;
+    text-align:center;
+    vertical-align: middle;
+    font-size: 1.3em;
+    width:100%;
+    min-width: 0;
+    white-space: nowrap;
+    overflow:hidden;
+    text-overflow: ellipsis;
+}
+.team-score {
+    flex: 3;
+    text-align: center;
+    vertical-align: center;
+    font-size: 4em;
+    font-weight: bold;
+    color: #fff;
+    background-color: #000a;
+}
+.quizzers { 
+    flex: 10;
+}
+.seat { 
+    flex: 1;
+    display:flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    font-size: 1.1em;
+    margin: 5px;
+    border: 1px solid #0000;
+}
+.seat:hover, .seat.jumped {
+    border: 1px solid darkgrey;
+    background-color: #fff5;
+}
+.seat.disabled {
+    background-color: #0005;
+}
