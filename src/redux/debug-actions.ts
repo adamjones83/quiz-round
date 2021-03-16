@@ -18,29 +18,29 @@ export function addDebugActions(getState,dispatch:Dispatch) {
         nextQuestion: () => dispatch(nextQuestion()),
         prevQuestion: () => dispatch(prevQuestion()),
         swapQuizzers: (lineupNum:number,seatA:number,seatB:number) => dispatch(swapQuizzers({ lineupNum, seatA, seatB})),
-        addScore: (teamId:string, quizzerId:string) => dispatch(addScore({
-            question: getState().get('question') as number,
-            teamId, quizzerId, isTeamOnly: !quizzerId, value: 20, type: 'Correct'
-        })),
-        addScoreForSeat: (team:number,seat:number) => {
+        addScoreRaw: (teamId:string, quizzerId?:string, question:number=-1, value:number=20, type:string="Correct") => {
+            if(question < 0) question = getState().get('question') as number;
+            dispatch(addScore({ question, teamId, quizzerId, isTeamOnly: !quizzerId, value, type }));
+        },
+        addScore: (team:number,seat:number,question:number=-1,value:number=20,type:string="Correct") => {
             const seatId = `Team ${team} - Seat ${seat}`;
+            if(question < 0) question = getState().get('question') as number;
             document.querySelectorAll('.seat').forEach(element => {
                 const dataset = (element as HTMLDivElement).dataset;
                 if(dataset['seatid'] === seatId) {
                     dispatch(addScore({
-                        question: getState().get('question') as number,
                         teamId: dataset['teamid'], quizzerId: dataset['quizzerid'], 
-                        isTeamOnly:false, value: 20, type: 'Correct'
+                        isTeamOnly:!dataset['quizzerid'], question, value, type
                     }));
                 }
             })
         },
         printScores: () => {
             const state = getState() as Map<string,unknown>;
-            const getQuizzer = (score:Score) => state.getIn(['quizzers',score.quizzerId])?.name;
+            const getQuizzer = (score:Score) => state.getIn(['quizzers',score.quizzerId])?.abbrName;
             const getTeam = (score:Score) => state.getIn(['teams', score.teamId])?.name;
             const scores = (state.get('scores') as List<Score>)
-                .map(s => `${getTeam(s)} - ${getQuizzer(s)}: ${s.value} points (${s.type})`);
+                .map(s => `#${s.question} ${getTeam(s)} - ${getQuizzer(s)}: ${s.value} pts (${s.type})`);
             scores.forEach(a => console.log(a));
             
         }
