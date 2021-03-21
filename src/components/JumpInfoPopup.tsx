@@ -1,16 +1,27 @@
 import * as React from "react";
-import { jumpedSelector } from "../redux/selectors";
+import { connect } from "react-redux";
+import { jumpedInfoSelector, timeLeftSelector } from "../redux/selectors";
 
 interface JumpInfoPopupProps {
-    jumper:string
+    info: ReturnType<typeof jumpedInfoSelector>,
+    timeLeft: number
 }
-export const JumpInfoPopup = (props:JumpInfoPopupProps) => {
-    return <div className={ 'popup-outer hidden' }>
+const mapStateToProps = state => ({
+    info: jumpedInfoSelector(state),
+    timeLeft: timeLeftSelector(state)
+});
+export const JumpInfoPopup = connect(mapStateToProps)((props:JumpInfoPopupProps) => {
+    const { info, timeLeft } = props;
+    const classNames = ['popup-outer'];
+    if(false) classNames.push('visible');
+    return <div className={ classNames.join(' ') }>
         <div className={ 'popup-inner' }>
-            <div>{ props.jumper }</div>
+            {
+                info.map(a => <div key={a.seatId}>{ `${a.name} (${a.teamName}-${a.color})` }</div>)
+            }
         </div>
     </div>;
-};
+});
 
 
 

@@ -1,28 +1,27 @@
 import { Dispatch } from 'redux';
 import { Map, List } from 'immutable';
-import { Score } from '../data/types';
+import { Score, ScoreType } from '../data/types';
 import {
     addScore,
-    disableSeat,
-    enableSeat,
+    getSeatId,
     nextQuestion,
     prevQuestion,
-    swapQuizzers
+    swapQuizzers,
+    toggleSeatEnabled
 } from './actions';
 
 
 export function addDebugActions(getState,dispatch:Dispatch) {
     const ACTIONS = {
-        disableSeat: (team,seat) => dispatch(disableSeat(`Team ${team} - Seat ${seat}`)),
-        enableSeat: (team,seat) => dispatch(enableSeat(`Team ${team} - Seat ${seat}`)),
+        disableSeat: (team,seat) => dispatch(toggleSeatEnabled(getSeatId(team,seat))),
         nextQuestion: () => dispatch(nextQuestion()),
         prevQuestion: () => dispatch(prevQuestion()),
         swapQuizzers: (lineupNum:number,seatA:number,seatB:number) => dispatch(swapQuizzers({ lineupNum, seatA, seatB})),
-        addScoreRaw: (teamId:string, quizzerId?:string, question:number=-1, value:number=20, type:string="Correct") => {
+        addScoreRaw: (teamId:string, quizzerId?:string, question:number=-1, value:number=20, type:ScoreType="correct") => {
             if(question < 0) question = getState().get('question') as number;
             dispatch(addScore({ question, teamId, quizzerId, isTeamOnly: !quizzerId, value, type }));
         },
-        addScore: (team:number,seat:number,question:number=-1,value:number=20,type:string="Correct") => {
+        addScore: (team:number,seat:number,question:number=-1,value:number=20,type:ScoreType="correct") => {
             const seatId = `Team ${team} - Seat ${seat}`;
             if(question < 0) question = getState().get('question') as number;
             document.querySelectorAll('.seat').forEach(element => {

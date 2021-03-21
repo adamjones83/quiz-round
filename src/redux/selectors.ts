@@ -1,18 +1,21 @@
-import { QuestionState, Team, Quizzer, Lineup, Seat, Score } from '../data/types';
-import { Map, List } from 'immutable';
+import { QuestionState, Team, Quizzer, Lineup, Seat, Score, TeamId, QuizzerId, SeatId } from '../data/types';
+import { Map, List, Set } from 'immutable';
 import { createSelector } from '@reduxjs/toolkit';
+import { JumpHandler, TimerHandler } from './actions';
 
 export const titleSelector = state => state.get('title') as string;
 export const questionSelector = state => state.get('question') as number;
-export const questionStateSelector = state => state.get('state') as QuestionState;
-export const teamsSelector = state => state.get('teams') as Map<string, Team>;
-export const quizzersSelector = state => state.get('quizzers') as Map<string, Quizzer>;
+export const questionStateSelector = state => state.get('questionState') as QuestionState;
+export const teamsSelector = state => state.get('teams') as Map<TeamId, Team>;
+export const quizzersSelector = state => state.get('quizzers') as Map<QuizzerId, Quizzer>;
 export const lineupsSelector = state => state.get('lineups') as List<Lineup>;
-export const disabledSeatsSelector = state => state.get('disabledSeats') as Set<string>;
+export const seatsSelector = state => state.get('seats') as Map<SeatId,Seat>;
 export const scoresSelector = state => state.get('scores') as List<Score>;
-export const jumpedSelector = state => state.get('jumped') as Set<string>;
+export const jumpedSelector = state => state.get('jumped') as Set<SeatId>;
 export const timerNameSelector = state => state.get('timerName') as string;
 export const timeLeftSelector = state => state.get('timeLeft') as number;
+export const jumpHandlerSelector = state => state.get('jumpHandler') as JumpHandler;
+export const timerHandlerSelector = state => state.get('timerHandler') as TimerHandler;
 
 /* COMPOUND CUSTOM SELECTORS */
 export const teamScoreSelector = createSelector(scoresSelector, teamsSelector,
@@ -27,6 +30,20 @@ export const quizzerScoreSelector = createSelector(scoresSelector, quizzersSelec
         return lookup;
     }, { } as { [quizzerId:string]:number })
 );
+export const answerInfoSelector = createSelector(questionSelector, seatsSelector, jumpedSelector, 
+    (question,seats,jumped) => jumped.map(seatId => {
+        const { teamId, quizzerId } = seats.get(seatId);
+        return { question, teamId, quizzerId }
+    }));
+export const jumpedInfoSelector = createSelector(jumpedSelector, seatsSelector, quizzersSelector, teamsSelector, lineupsSelector,
+    (jumped, seats, quizzers, teams, lineups) => jumped
+        .map(seatId => seats.get(seatId))
+        .map(seat => ({
+            seatId: seat.id,
+            name: quizzers.get(seat.quizzerId)?.abbrName,
+            teamName: teams.get(seat.teamId)?.abbrName,
+            color: lineups.find(a => a.teamId === seat.teamId)?.color
+        })));
 
 function getTeamScore(scores:Score[], teamId:string) {
     return scores

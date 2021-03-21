@@ -4,6 +4,7 @@ import { teamScoreSelector, teamsSelector } from "../redux/selectors";
 import { SeatView } from "./SeatView";
 import { Map } from 'immutable';
 import { Lineup, Team } from '../data/types';
+import { getSeatId } from "../redux/actions";
 
 interface TeamViewProps {
   lineupNum:number;
@@ -26,7 +27,7 @@ export const TeamView = connect(mapStateToProps)((props: TeamViewProps) => {
       </div>
       <div className={"team-score"}>{score}</div>
       <div className={"quizzers flex-column"}>
-        { [...new Array(5)].map((_,i) => <SeatView key={i} lineupNum={lineupNum} seatNum={i} lineup={lineup} teamId={team.id} />) }
+        { [...new Array(5)].map((_,i) => <SeatView key={i} seatId={getSeatId(lineupNum,i)} />) }
       </div>
     </div>
   );

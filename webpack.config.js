@@ -2,6 +2,9 @@ const path = require('path');
 
 module.exports = {
   entry: "./src/mainWindow.tsx",
+  // devtool: false,
+  // devtool: 'source-map', // production with source maps
+  devtool: 'inline-source-map', // pre-production with source maps
   mode: 'development',
   module: {
     rules: [

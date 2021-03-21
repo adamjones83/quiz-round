@@ -1,4 +1,4 @@
-import { JumpHandler } from './jump-handler';
+import { JumpHandler } from './actions/jump-handler';
 
 export function hookupKeyboardJumps(getState) {
     const jumpHandler = getState().get('jumpHandler') as JumpHandler;

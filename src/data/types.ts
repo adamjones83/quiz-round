@@ -1,8 +1,10 @@
-
+export type QuizzerId = string; // type alias to allow more explicit id types
+export type SeatId = string;
+export type TeamId = string;
 export type QuestionState = 'before'|'jumpset'|'answer'|'bonus';
 export type ScoreType = 'foul-odd'|'foul-even'|'timeout'|
     'overruled-challenge'|'upheld-challenge'|'overruled-appeal'|'upheld-appeal'|
-    'correct'|'error'|'correct-bonus'|'error-bonus'|
+    'correct'|'error'|'bonus-correct'|'bonus-error'|
     'correct-quizout'|'error-errorout'|
     '5+ error'|'error after 15'|
     '3rd person bonus'|'4th person bonus'|'5th person bonus';
@@ -10,7 +12,7 @@ export interface Score {
     question: number,
     quizzerId?: string,
     teamId: string,
-    type: string,
+    type: ScoreType,
     isTeamOnly: boolean,
     value: number
 }
@@ -40,8 +42,7 @@ export interface Seat {
     id: string,
     teamId: string,
     quizzerId: string,
-    isEnabled: boolean,
-    isJumped: boolean
+    isEnabled: boolean
 }
 
 /*
@@ -50,3 +51,4 @@ export interface Seat {
     answer: Correct, Error, Cancel
     bonus: Correct, Error
 */
+

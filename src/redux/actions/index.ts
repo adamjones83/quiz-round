@@ -1,3 +1,4 @@
 export * from './admin';
 export * from './seats';
-export * from './other';
+export * from './jump-handler';
+export * from './timer-handler';
