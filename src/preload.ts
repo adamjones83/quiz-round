@@ -1,5 +1,7 @@
 import { promises as fs } from 'fs';
 import { ipcRenderer } from 'electron';
+import { Quizzer, Team } from './data/types';
+import { QuizRoundClient } from './sqlite/data-layer';
 
 /*
 // example of sync IPC messaging
@@ -11,17 +13,22 @@ ipcRenderer.on('asynchronous-reply', (event, arg) => {
 });
 ipcRenderer.send('asynchronous-message', 'dab');
 */
-
-async function save() {
-    const data = { one: 1 };
-    await fs.writeFile('data.json', JSON.stringify(data));
+async function fileLoadQuizzers() {
+    const data = await fs.readFile('target/data/quizzers.json', { encoding: 'utf8' })
+    return JSON.parse(data) as Quizzer[];
+}
+async function fileLoadTeams() {
+    const data = await fs.readFile('target/data/teams.json', { encoding: 'utf8' })
+    return JSON.parse(data) as Team[];
 }
 
 export interface ExposedFunctions {
-    save: () => void
+    loadQuizzers: () => Promise<Quizzer[]>,
+    loadTeams: () => Promise<Team[]>
 }
 const exposed:ExposedFunctions = { 
-    save
+    loadQuizzers: fileLoadQuizzers,
+    loadTeams: fileLoadTeams
 }
 
 // TODO: this is BAD, use a context bridge instead which basically works the same but avoids a security bug SEE

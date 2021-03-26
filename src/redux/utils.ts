@@ -24,7 +24,7 @@ export function shuffle<T>(items:T[]) {
     }
     return shuffled;
 }
-export function toLookup<T>(items:T[], keySelector:(item:T)=>string) {
+export function toLookup<T>(items:T[], keySelector:(item:T)=>string) : Record<string,T> {
     const result = { };
     for(const item of items) result[keySelector(item)] = item;
     return result;

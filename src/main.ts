@@ -12,7 +12,7 @@ const path = require('path');
 
 const isMac = process.platform === 'darwin';
 app.name = "Electron Demo";
-
+app.disableHardwareAcceleration();
 // set up the menu - NOTE: this replaces the default menu and dev tools are no longer available, look into adding them
 /*
 const template: (MenuItemConstructorOptions | MenuItem)[] = isMac ? getMacMenu() : getWindowsMenu();

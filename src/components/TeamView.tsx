@@ -1,27 +1,29 @@
 import * as React from "react";
 import { connect } from 'react-redux';
-import { teamScoreSelector, teamsSelector } from "../redux/selectors";
+import { colorSelector, teamScoreSelector, teamsSelector } from "../redux/selectors";
 import { SeatView } from "./SeatView";
-import { Map } from 'immutable';
+import { Map, List } from 'immutable';
 import { Lineup, Team } from '../data/types';
 import { getSeatId } from "../redux/actions";
 
 interface TeamViewProps {
-  lineupNum:number;
+  lineupNum: number;
   lineup: Lineup;
-  teams:Map<string,Team>;
+  colors: List<string>;
+  teams: Map<string,Team>;
   teamScores: { [teamId:string]:number };
 }
 const mapStateToProps = state => ({
-  teams: teamsSelector(state),
-  teamScores: teamScoreSelector(state)
+    colors: colorSelector(state),
+    teams: teamsSelector(state),
+    teamScores: teamScoreSelector(state)
 });
 export const TeamView = connect(mapStateToProps)((props: TeamViewProps) => {
-  const { lineupNum, lineup, teams, teamScores } = props;
+  const { lineupNum, lineup, teams, teamScores, colors } = props;
   const team = teams.get(lineup.teamId);
   const score = teamScores[lineup.teamId];
   return (
-    <div className={"team flex-column"} style={{ backgroundColor: lineup.color }}>
+    <div className={"team flex-column"} style={{ backgroundColor: colors.get(lineupNum) }}>
       <div className={"team-name"}>
         <div>{team.name}</div>
       </div>

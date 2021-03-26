@@ -1,10 +1,10 @@
-import { createAction, ActionReducerMapBuilder } from '@reduxjs/toolkit';
+import { createAction, ActionReducerMapBuilder, nanoid } from '@reduxjs/toolkit';
 import { List, updateIn } from 'immutable';
 import { RoundState } from '../reducer';
 import { Score, TeamId, QuizzerId } from '../../data/types';
-import { questionSelector } from '../selectors';
+import { meetIdSelector, questionSelector, roundIdSelector } from '../selectors';
 
-interface AnsweredInfo {
+export interface AnsweredInfo {
     teamId:TeamId,
     quizzerId:QuizzerId,
     correct:boolean
@@ -25,11 +25,15 @@ export function addRoundLogicActions(builder:ActionReducerMapBuilder<RoundState>
         .addCase(cancelAnswer, state => updateIn(state, ['questionState'], () => 'before'))
         .addCase(answered, (state,action) => {
             const question = questionSelector(state);
+            const roundId = roundIdSelector(state);
+            const meetId = meetIdSelector(state);
             const doBonus = action.payload.every(a => !a.correct);
             return action.payload.reduce((newState, { teamId, quizzerId, correct }) => {
                 return newState.update('scores', value => (value as List<Score>).push({
+                    id: nanoid(), roundId, meetId,
                     question, teamId, quizzerId, isTeamOnly: false,
-                    value: correct ? 20 : 0, type: correct ? 'correct' : 'error'
+                    value: correct ? 20 : 0, type: correct ? 'correct' : 'error',
+                    createdOn: new Date().toISOString()
                 }));
             }, state as unknown as RoundState)
                 .set('question', doBonus ? question : question + 1)
@@ -37,10 +41,15 @@ export function addRoundLogicActions(builder:ActionReducerMapBuilder<RoundState>
         })
         .addCase(bonusAnswered, (state,action) => {
             const question = questionSelector(state);
+            const roundId = roundIdSelector(state);
+            const meetId = meetIdSelector(state);
             return action.payload.reduce((newState, { teamId, quizzerId, correct }) => {
+                
                 return newState.update('scores', value => (value as List<Score>).push({
+                    id: nanoid(), roundId, meetId,
                     question, teamId, quizzerId, isTeamOnly: true,
-                    value: correct ? 10 : 0, type: correct ? 'bonus-correct' : 'bonus-error'
+                    value: correct ? 10 : 0, type: correct ? 'bonus-correct' : 'bonus-error',
+                    createdOn: new Date().toISOString()
                 }));
             }, state as unknown as RoundState)
                 .set('question', question + 1)

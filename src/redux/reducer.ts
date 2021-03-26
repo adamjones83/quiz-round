@@ -1,25 +1,33 @@
 import { Map, List, Set } from 'immutable';
 import { Action} from 'redux';
-import { ActionReducerMapBuilder, createReducer } from '@reduxjs/toolkit';
-import { addAdminActions, addSeatActions, addTimerActions, TimerHandler, addJumpActions, JumpHandler } from './actions';
-import { Team, Quizzer, Lineup, Seat, Score, QuizzerId, SeatId, TeamId } from '../data/types';
+import { ActionReducerMapBuilder, createReducer, nanoid } from '@reduxjs/toolkit';
+import { addAdminActions, addSeatActions, addTimerActions, TimerHandler, addJumpActions, JumpHandler, getSeatId } from './actions';
+import { Team, Quizzer, Lineup, Seat, Score, QuizzerId, SeatId, TeamId, SeatMap } from '../data/types';
 import { addRoundLogicActions } from './actions/round-logic';
+import { TeamColor } from '../data/colors';
 
 export const defaultState = Map({
+    roundId: nanoid(),
+    meetId: nanoid(),
     title: 'Quiz Round 1',
     question: 1,
     questionState: 'before',
     teams: Map<TeamId,Team>(), 
     quizzers: Map<QuizzerId,Quizzer>(),
+    defaultLineups: Map<TeamId,Lineup>(),
+    colors: List<string>([TeamColor.blue, TeamColor.green, TeamColor.red]),
     lineups: List<Lineup>(),
     seats: Map<SeatId,Seat>(),
+    bonusSeatMaps: List<SeatMap>(),
     scores: List<Score>(),
     isLatched: false,
     jumpHandler: undefined as JumpHandler,
     timerHandler: undefined as TimerHandler,
     jumped: Set<SeatId>(),
     timerName: '',
-    timeLeft: 0
+    timeLeft: 0,
+    showScores: false,
+    showLineups: false
 });
 export type RoundState = typeof defaultState;
 

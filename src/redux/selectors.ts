@@ -1,14 +1,16 @@
-import { QuestionState, Team, Quizzer, Lineup, Seat, Score, TeamId, QuizzerId, SeatId } from '../data/types';
+import { QuestionState, Team, Quizzer, Lineup, Seat, Score, TeamId, QuizzerId, SeatId, SeatMap } from '../data/types';
 import { Map, List, Set } from 'immutable';
 import { createSelector } from '@reduxjs/toolkit';
 import { JumpHandler, TimerHandler } from './actions';
 
+export const showLineupsSelector = state => state.get('showLineups') as boolean;
 export const titleSelector = state => state.get('title') as string;
 export const questionSelector = state => state.get('question') as number;
 export const questionStateSelector = state => state.get('questionState') as QuestionState;
 export const teamsSelector = state => state.get('teams') as Map<TeamId, Team>;
 export const quizzersSelector = state => state.get('quizzers') as Map<QuizzerId, Quizzer>;
 export const lineupsSelector = state => state.get('lineups') as List<Lineup>;
+export const defaultLineupsSelector = state => state.get('defaultLineups') as Map<TeamId, Lineup>;
 export const seatsSelector = state => state.get('seats') as Map<SeatId,Seat>;
 export const scoresSelector = state => state.get('scores') as List<Score>;
 export const jumpedSelector = state => state.get('jumped') as Set<SeatId>;
@@ -16,6 +18,11 @@ export const timerNameSelector = state => state.get('timerName') as string;
 export const timeLeftSelector = state => state.get('timeLeft') as number;
 export const jumpHandlerSelector = state => state.get('jumpHandler') as JumpHandler;
 export const timerHandlerSelector = state => state.get('timerHandler') as TimerHandler;
+export const seatMapsSelector = state => state.get('bonusSeatMaps') as List<SeatMap>;
+export const showScoresSelector = state => !!state.get('showScores');
+export const colorSelector = state => state.get('colors') as List<string>;
+export const roundIdSelector = state => state.get('roundId') as string;
+export const meetIdSelector = state => state.get('meetId') as string;
 
 /* COMPOUND CUSTOM SELECTORS */
 export const teamScoreSelector = createSelector(scoresSelector, teamsSelector,
@@ -30,20 +37,33 @@ export const quizzerScoreSelector = createSelector(scoresSelector, quizzersSelec
         return lookup;
     }, { } as { [quizzerId:string]:number })
 );
-export const answerInfoSelector = createSelector(questionSelector, seatsSelector, jumpedSelector, 
-    (question,seats,jumped) => jumped.map(seatId => {
-        const { teamId, quizzerId } = seats.get(seatId);
-        return { question, teamId, quizzerId }
-    }));
-export const jumpedInfoSelector = createSelector(jumpedSelector, seatsSelector, quizzersSelector, teamsSelector, lineupsSelector,
-    (jumped, seats, quizzers, teams, lineups) => jumped
+export const answerInfoSelector = createSelector(jumpedSelector, seatsSelector, quizzersSelector, teamsSelector, lineupsSelector, colorSelector,
+    (jumped, seats, quizzers, teams, lineups, colors) => jumped
+        .toList()
         .map(seatId => seats.get(seatId))
+        .filter(seat => seat && seat.isEnabled)
         .map(seat => ({
             seatId: seat.id,
+            teamId: seat.teamId,
+            quizzerId: seat.quizzerId,
             name: quizzers.get(seat.quizzerId)?.abbrName,
             teamName: teams.get(seat.teamId)?.abbrName,
-            color: lineups.find(a => a.teamId === seat.teamId)?.color
-        })));
+            color: colors.get(lineups.findIndex(a => a.teamId === seat.teamId))
+    })));
+export const bonusInfoSelector = createSelector(jumpedSelector, seatsSelector, quizzersSelector, teamsSelector, lineupsSelector, colorSelector, seatMapsSelector,
+    (jumped, seats, quizzers, teams, lineups, colors, seatMaps) => jumped
+        .flatMap(seatId => seatMaps.filter(s => s.from === seatId).map(s => s.to))
+        .toList()
+        .map(seatId => seats.get(seatId))
+        .filter(seat => seat && seat.isEnabled)
+        .map(seat => ({
+            seatId: seat.id,
+            teamId: seat.teamId,
+            quizzerId: seat.quizzerId,
+            name: quizzers.get(seat.quizzerId)?.abbrName,
+            teamName: teams.get(seat.teamId)?.abbrName,
+            color: colors.get(lineups.findIndex(a => a.teamId === seat.teamId))
+    })));
 
 function getTeamScore(scores:Score[], teamId:string) {
     return scores

@@ -1,7 +1,19 @@
 # TODO
+- github repo
+- AWS credentials
+- data layer for db objects - insert, getAll
+- sample quizzer & team data in database
+- round loads from db
+- change lineups to come from lookup rather than team "defaultLineup"
+- timers (answering, timeout, challenge, ...)
+- scores view
+- scores add/remove UI
+- audience view
+    * optional mirrored team orders
+    * hide action buttons
+- general UI cleanup
 
 ## HARDWARE/ENVIRONMENT
-- keyboard jump emulator
 - serial port (USB) based jump handler
     * optional hardware-disable seats (allow for keyboard/virtual override)
 - virtual jumps via the internet (web sockets)?

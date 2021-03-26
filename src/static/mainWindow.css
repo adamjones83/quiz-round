@@ -30,7 +30,7 @@ html, body, #react-mount, #react-mount>div {
     background-color: #0003;
 }
 .popup-outer.visible {
-    display: block;
+    display: flex;
 }
 .popup-inner {
     width: 600px;
@@ -38,15 +38,32 @@ html, body, #react-mount, #react-mount>div {
     margin: auto;
     background: #fff;
     animation-name: fadein;
-    animation-duration: 200ms;
+    animation-duration: 300ms;
     border: 3px solid #eee;
     border-radius: 2px;
     position: relative;
-    top: 300px;
+    align-items: center;
+    justify-content: stretch;
 }
+.jump-popup {
+    font-size: 4em;
+    width: 100%;
+    text-align: center;
+}
+.scores-popup {
+    font-size: 2em;
+}
+.lineups-popup {
+    font-size: 2em;
+}
+.lineup-selection {
+    padding: 10px;
+    border: 1px solid #000;
+}
+
 @keyframes fadein {
-    from { background-color: #fff0; }
-    to { background-color: #ffff; }
+    from { opacity: 0; }
+    to { opacity: 1; }
 }
 
 .app {

@@ -2,7 +2,7 @@ import { Dispatch } from 'redux';
 import { createAction } from '@reduxjs/toolkit';
 import { ActionReducerMapBuilder } from '@reduxjs/toolkit';
 import { Map, Set, List } from 'immutable';
-import { SeatId } from '../../data/types';
+import { QuestionState, SeatId } from '../../data/types';
 import { RoundState } from '../reducer';
 import { jumpedSelector, questionStateSelector } from '../selectors';
 
@@ -72,7 +72,7 @@ export function addJumpActions(builder:ActionReducerMapBuilder<RoundState>) {
             const questionState = questionStateSelector(state);
             if(questionState !== 'before') return state;
             const isJumped = jumpedSelector(state).count();
-            return state.set('questionState', isJumped ? 'answering': 'jumpset');
+            return state.set('questionState', isJumped ? 'answer': 'jumpset');
         })
         .addCase(clearset, state => {
             const questionState = questionStateSelector(state);
@@ -81,6 +81,6 @@ export function addJumpActions(builder:ActionReducerMapBuilder<RoundState>) {
         })
         .addCase(jumpChanged, (state, action) => (state as unknown as RoundState)
             .set('jumped', Set(action.payload))
-            .update('questionState', value => value === 'jumpset' ? 'answering' : value))
+            .update('questionState', value => value === 'jumpset' ? 'answer' : value))
     
 }

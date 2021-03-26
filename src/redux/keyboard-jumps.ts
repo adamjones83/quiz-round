@@ -1,4 +1,5 @@
 import { JumpHandler } from './actions/jump-handler';
+import { getSeatId } from './actions/seats';
 
 export function hookupKeyboardJumps(getState) {
     const jumpHandler = getState().get('jumpHandler') as JumpHandler;
@@ -8,11 +9,11 @@ export function hookupKeyboardJumps(getState) {
         const { key } = e;
         if(!keysdown[key]) {
             let seatNum = team1.indexOf(key);
-            if(seatNum >= 0) jumpHandler.jump(`Team 0 - Seat ${seatNum}`);
+            if(seatNum >= 0) jumpHandler.jump(getSeatId(0,seatNum));
             seatNum = team2.indexOf(key);
-            if(seatNum >= 0) jumpHandler.jump(`Team 1 - Seat ${seatNum}`);
+            if(seatNum >= 0) jumpHandler.jump(getSeatId(1,seatNum));
             seatNum = team3.indexOf(key);
-            if(seatNum >= 0) jumpHandler.jump(`Team 2 - Seat ${seatNum}`);
+            if(seatNum >= 0) jumpHandler.jump(getSeatId(2,seatNum));
             keysdown[key] = true;
         }
     });
@@ -20,10 +21,10 @@ export function hookupKeyboardJumps(getState) {
         const { key } = e;
         delete keysdown[key];
         let seatNum = team1.indexOf(key);
-        if(seatNum >= 0) jumpHandler.sit(`Team 0 - Seat ${seatNum}`);
+        if(seatNum >= 0) jumpHandler.sit(getSeatId(0,seatNum));
         seatNum = team2.indexOf(key);
-        if(seatNum >= 0) jumpHandler.sit(`Team 1 - Seat ${seatNum}`);
+        if(seatNum >= 0) jumpHandler.sit(getSeatId(1,seatNum));
         seatNum = team3.indexOf(key);
-        if(seatNum >= 0) jumpHandler.sit(`Team 2 - Seat ${seatNum}`);
+        if(seatNum >= 0) jumpHandler.sit(getSeatId(2,seatNum));
     });
 }

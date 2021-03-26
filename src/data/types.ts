@@ -8,31 +8,46 @@ export type ScoreType = 'foul-odd'|'foul-even'|'timeout'|
     'correct-quizout'|'error-errorout'|
     '5+ error'|'error after 15'|
     '3rd person bonus'|'4th person bonus'|'5th person bonus';
+export interface Round {
+    id: string,
+    meetId: string,
+    name: string,
+    startsOn: string // ISO date string
+}
+export interface Meet {
+    id: string,
+    name: string,
+    startsOn: string // ISO date string
+}
 export interface Score {
+    id: string,
+    roundId: string,
+    meetId: string,
     question: number,
-    quizzerId?: string,
     teamId: string,
-    type: ScoreType,
+    quizzerId?: string,
     isTeamOnly: boolean,
-    value: number
+    value: number,
+    type: ScoreType,
+    createdOn: string // ISO date string
 }
 export interface Team {
     id: string,
     name: string,
-    abbrName: string,
-    defaultLineup: Lineup
+    abbrName: string
 }
 export interface Quizzer {
     id: string,
     name: string,
-    abbrName: string
+    abbrName: string,
+    teamName: string
 }
 export interface Lineup {
+    id:string,
     teamId:string,
     quizzerIds:string[],
     captainId?:string,
-    coCaptainId?:string,
-    color?:string
+    coCaptainId?:string
 }
 export interface JumpInfo {
     isLatched: boolean,
@@ -43,6 +58,10 @@ export interface Seat {
     teamId: string,
     quizzerId: string,
     isEnabled: boolean
+}
+export interface SeatMap {
+    from:SeatId,
+    to:SeatId
 }
 
 /*
