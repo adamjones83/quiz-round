@@ -6,7 +6,8 @@
   "scripts": {
     "start": "electron target/main",
     "build": "cp -R src/static/* target; tsc; npx webpack",
-    "db": "tsc src/sql-test.ts --outDir database",
+    "build-db": "tsc src/database/data-import.ts --outDir database",
+    "db-import": "node database/database/data-import",
     "copy-styles": "cp src/static/mainWindow.css target/mainWindow.css",
     "test": "jest"
   },

@@ -1,5 +1,5 @@
-import { Database } from 'sqlite3';
-import { Quizzer, Team, Lineup, Meet, Round, Score } from '../data/types'
+import { Database, Statement } from 'sqlite3';
+import { Quizzer, Team, Lineup, Meet, Round, Score } from '../../data/types'
 
 interface DbLineup {
     id:string,
@@ -17,7 +17,7 @@ function toLineup(dbLineup:DbLineup) {
     return {
         id: dbLineup.id,
         teamId: dbLineup.teamId,
-        quizzerIds: [...new Array(5)].map((_,index) => dbLineup[`quizzerId${index}`]),
+        quizzerIds: [...new Array(5)].map((_,index) => dbLineup[`quizzerId${index+1}`]),
         captainId: dbLineup.captainId,
         coCaptainId: dbLineup.coCaptainId
     } as Lineup;
@@ -26,6 +26,19 @@ function toLineup(dbLineup:DbLineup) {
 
 
 export function QuizRoundClient(filepath:string) {
+    
+    function runMany<T extends { [key:string]:unknown }|unknown[]>(command:string, paramObjItems: T[] ) {
+        return new Promise((res,rej) => {
+            const db = new Database(filepath);
+            try{
+                const cmd = db.prepare(command); // , (cmd:Statement,err) => {
+                paramObjItems.forEach(a => cmd.run(a))
+                res(undefined);
+            } catch {
+                rej('error running prepared statement');
+            }
+        })
+    }
     function runCommand(command:string, paramObj: {[key:string]:unknown}|unknown[]) {
         return new Promise((res,rej) => {
             const db = new Database(filepath);
@@ -44,6 +57,10 @@ export function QuizRoundClient(filepath:string) {
         });
     }
     
+    function insertQuizzers(quizzers:Quizzer[]) {
+        return runMany("INSERT INTO quizzers (id, name, abbrName, teamName) values ($id,$name,$abbrName,$teamName)",
+            quizzers.map(a => ({ $id:a.id, $name:a.name, $abbrName:a.abbrName, $teamName:a.teamName })));
+    }
     function insertQuizzer(quizzer:Quizzer) {
         return runCommand("INSERT INTO quizzers (id, name, abbrName, teamName) values ($id, $name, $abbrName, $teamName)",
             { $id: quizzer.id, $name: quizzer.name, $abbrName: quizzer.abbrName, $teamName: quizzer.teamName });
@@ -52,6 +69,10 @@ export function QuizRoundClient(filepath:string) {
         return getAllQuery<Quizzer>("SELECT * FROM quizzers");
     }
 
+    function insertTeams(teams:Team[]) {
+        return runMany("INSERT INTO teams (id, name, abbrName) values ($id, $name, $abbrName)",
+            teams.map(a => ({ $id: a.id, $name: a.name, $abbrName: a.abbrName })));
+    }
     function insertTeam(team:Team) {
         return runCommand("INSERT INTO teams (id, name, abbrName) values ($id, $name, $abbrName)",
             { $id: team.id, $name: team.name, $abbrName: team.abbrName });
@@ -60,6 +81,18 @@ export function QuizRoundClient(filepath:string) {
         return getAllQuery<Team>("SELECT * FROM teams");
     }
 
+    function insertLineups(lineups:Lineup[]) {
+        const cmd = "INSERT INTO lineups (id, teamId, quizzerId1, quizzerId2, quizzerId3, quizzerId4, quizzerId5, captainId, coCaptainId) values " +
+            "($id, $teamId, $quizzerId1, $quizzerId2, $quizzerId3, $quizzerId4, $quizzerId5, $captainId, $coCaptainId)";
+        return runMany(cmd, lineups.map(a => ({
+            $id:a.id, $teamId:a.teamId, $captainId:a.captainId, $coCaptainId: a.coCaptainId,
+            $quizzerId1: a.quizzerIds[0],
+            $quizzerId2: a.quizzerIds[1],
+            $quizzerId3: a.quizzerIds[2],
+            $quizzerId4: a.quizzerIds[3],
+            $quizzerId5: a.quizzerIds[4],
+        })));
+    }
     function insertLineup(lineup:Lineup) {
         const quizzerIds = [...new Array(5)].map((_,index) => lineup.quizzerIds[index]);
         return runCommand("INSERT INTO lineups (id, teamId, quizzerId1, quizzerId2, quizzerId3, quizzerId4, quizzerId5, captainId, coCaptainId) values (?, ?, ?, ?, ?, ?, ?, ?, ?)",
@@ -95,9 +128,9 @@ export function QuizRoundClient(filepath:string) {
     }
     
     return { 
-        insertQuizzer, getQuizzers,
-        insertTeam, getTeams,
-        insertLineup, getLineups,
+        insertQuizzers, insertQuizzer, getQuizzers,
+        insertTeams, insertTeam, getTeams,
+        insertLineups, insertLineup, getLineups,
         insertMeet, getMeets,
         insertRound, getRounds,
         insertScore, getScores

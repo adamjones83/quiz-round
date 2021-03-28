@@ -1,7 +1,7 @@
 import { promises as fs } from 'fs';
 import { ipcRenderer } from 'electron';
-import { Quizzer, Team } from './data/types';
-import { QuizRoundClient } from './sqlite/data-layer';
+import { Lineup, Quizzer, Team } from './data/types';
+import { QuizRoundClient } from './database/lib/data-layer';
 
 /*
 // example of sync IPC messaging
@@ -13,22 +13,22 @@ ipcRenderer.on('asynchronous-reply', (event, arg) => {
 });
 ipcRenderer.send('asynchronous-message', 'dab');
 */
-async function fileLoadQuizzers() {
-    const data = await fs.readFile('target/data/quizzers.json', { encoding: 'utf8' })
-    return JSON.parse(data) as Quizzer[];
-}
-async function fileLoadTeams() {
-    const data = await fs.readFile('target/data/teams.json', { encoding: 'utf8' })
-    return JSON.parse(data) as Team[];
+
+async function readJson<T>(filepath:string) {
+    const data = await fs.readFile(filepath, { encoding: 'utf8' });
+    return JSON.parse(data) as T;
 }
 
 export interface ExposedFunctions {
-    loadQuizzers: () => Promise<Quizzer[]>,
-    loadTeams: () => Promise<Team[]>
+    getQuizzers: () => Promise<Quizzer[]>,
+    getTeams: () => Promise<Team[]>,
+    getLineups: () => Promise<Lineup[]>
 }
+const client = QuizRoundClient('sample.db')
 const exposed:ExposedFunctions = { 
-    loadQuizzers: fileLoadQuizzers,
-    loadTeams: fileLoadTeams
+    getQuizzers: client.getQuizzers,
+    getTeams: client.getTeams,
+    getLineups: client.getLineups 
 }
 
 // TODO: this is BAD, use a context bridge instead which basically works the same but avoids a security bug SEE

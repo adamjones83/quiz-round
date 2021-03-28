@@ -1,11 +1,10 @@
 import { setTimerHandler, setJumpHandler, updateQuizzers, updateTeams, updateLineups, getSeatId, setBonusSeatmaps, updateDefaultLineups } from './actions';
-import { Team, Quizzer, Lineup } from '../data/types';
 import { addDebugActions } from './debug-actions';
 import { shuffle, toLookup } from './utils';
-import { Client } from '../data/client';
 import { hookupKeyboardJumps } from './keyboard-jumps';
+import { ExposedFunctions } from '../preload';
 
-export async function initialize(store) {
+export async function initialize(store, client:ExposedFunctions) {
     const { getState, dispatch } = store;
     
     Object.assign(global, { getState, dispatch });
@@ -15,18 +14,16 @@ export async function initialize(store) {
     dispatch(setJumpHandler(dispatch));
     
     // load quizzers
-    const client = Client();
     const quizzers = toLookup(await client.getQuizzers(), a => a.id);
     dispatch(updateQuizzers(quizzers));
     const teams = toLookup(await client.getTeams(), a => a.id);
     dispatch(updateTeams(teams));
-    const defaultLineups = toLookup((Object.values(teams) as any[]).map(team => team.defaultLineup as Lineup), (lineup:Lineup) => lineup.teamId);
-    dispatch(updateDefaultLineups(defaultLineups));
+    const lineups = toLookup(await client.getLineups(), a => a.teamId);
+    dispatch(updateDefaultLineups(lineups));
 
     // load lineups for this quiz round
     const teamIds = shuffle(Object.keys(teams)).slice(0,2);
-    const lineups:Lineup[] = teamIds.map(teamId => defaultLineups[teamId]);
-    dispatch(updateLineups(lineups));
+    dispatch(updateLineups(teamIds.map(teamId => lineups[teamId])));
 
     // set seat maps for bonuses
     const seatMaps = [];

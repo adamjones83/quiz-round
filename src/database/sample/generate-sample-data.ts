@@ -1,6 +1,6 @@
-import { Quizzer, Team } from '../redux/types'
+import { Quizzer, Team, Lineup } from '../../data/types';
 import { nanoid } from 'nanoid';
-import { writeFile } from 'fs/promises';
+
 const quizzerNames: string[] = [
   "Shannon Castillo",
   "Jescie Little",
@@ -120,27 +120,32 @@ const teamNames: string[] = [
 export function generateQuizzers() {
     return quizzerNames.map(name => ({
         id: nanoid(),
-        name, 
+        name,
+        abbrName: name.split(' ').map((a,i) => i==1 ? a[0] : a).join(' ')
     })) as Quizzer[];
 }
 export function generateTeams() {
     return teamNames.map(name => ({
         id: nanoid(),
-        name
+        name,
+        abbrName:name
     })) as Team[];
 }
-export function setDefaultLineups(teams:Team[], quizzers:Quizzer[]) {
+export function generateDefaultLineups(teams:Team[], quizzers:Quizzer[]) {
     const shuffled = shuffle(quizzers);
-    teams.forEach(team => {
+    return teams.map(team => {
         const quizzerIds = shuffled.splice(0,5).map(a => a.id);
-        team.defaultLineup = {
+        return {
+            id: nanoid(),
             teamId: team.id,
             quizzerIds,
             captainId: quizzerIds[0],
             coCaptainId: quizzerIds[1]
-        };
+        } as Lineup;
     });
 }
+
+
 function shuffle<T>(items:T[]) {
     const shuffled = [...items];
     let swapIndex = -1;
@@ -150,15 +155,3 @@ function shuffle<T>(items:T[]) {
     }
     return shuffled;
 }
-
-const quizzers = generateQuizzers();
-const teams = generateTeams();
-setDefaultLineups(teams, quizzers);
-Promise.resolve()
-    .then(() => writeFile('quizzers.json', JSON.stringify(quizzers, null, '\t')))
-    .then(() => writeFile('teams.json', JSON.stringify(teams, null, '\t')))
-    .then(
-        () => console.log('generated teams.json and quizzers.json'),
-        err => console.error(err)
-    );
-    

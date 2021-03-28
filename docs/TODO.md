@@ -1,8 +1,4 @@
 # TODO
-- github repo
-- AWS credentials
-- data layer for db objects - insert, getAll
-- sample quizzer & team data in database
 - round loads from db
 - change lineups to come from lookup rather than team "defaultLineup"
 - timers (answering, timeout, challenge, ...)
