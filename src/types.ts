@@ -63,7 +63,11 @@ export interface SeatMap {
     from:SeatId,
     to:SeatId
 }
-
+export interface QuizClient {
+    getQuizzers: () => Promise<Quizzer[]>,
+    getTeams: () => Promise<Team[]>,
+    getLineups: () => Promise<Lineup[]>
+}
 /*
     before: JumpSet, Timeout, Challenge/Appeal
     jumpset: SetTimer, Jump, Cancel

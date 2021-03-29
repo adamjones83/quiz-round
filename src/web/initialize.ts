@@ -2,9 +2,9 @@ import { setTimerHandler, setJumpHandler, updateQuizzers, updateTeams, updateLin
 import { addDebugActions } from './redux/debug-actions';
 import { shuffle, toLookup } from './utils';
 import { hookupKeyboardJumps } from './keyboard-jumps';
-import { ExposedFunctions } from '../preload';
+import { QuizClient } from '../types';
 
-export async function initialize(store, client:ExposedFunctions) {
+export async function initialize(store, client:QuizClient) {
     const { getState, dispatch } = store;
     
     Object.assign(global, { getState, dispatch });
@@ -40,8 +40,15 @@ export async function initialize(store, client:ExposedFunctions) {
     // add keyboard jump handler
     hookupKeyboardJumps(getState);
 
-    // hookup menu handlers
-    client.addEventHandler(menuEvent => {
-        console.log('MENU EVENT: ' + menuEvent.name);
-    })
+    // respond to menu-command events
+
+    // write some warnings for TODO items
+    DisplayWarnings();
+}
+
+function DisplayWarnings() {
+    console.warn('Hardware Rendering is currently disabled from main.ts');
+    console.warn('Need to respond to menu-command events in initialize.ts');
+    console.warn('using a non-minified react for development, swap with minified for production');
+    console.warn('Figure out about context isolation that should be enabled in main.ts during browser setup')
 }

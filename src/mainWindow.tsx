@@ -6,18 +6,11 @@ import { applyMiddleware, createStore } from 'redux';
 import { defaultState, reducer } from './web/redux/reducer'
 import { initialize } from './web/initialize';
 import { storeDebugMiddleware } from './web/redux/debug-middleware';
+import { QuizClient } from './types';
 
-/* ENABLE EXPOSED NODE FUNCTIONALITY VIA PRELOAD FUNCTIONS AND/OR IPC CALLS
-import { ExposedFunctions } from './preload';
-import { ipcRenderer } from 'electron';
-*/ 
-import { ExposedFunctions } from './preload';
-const client = global as unknown as ExposedFunctions;
+const client = window['client'] as QuizClient;
 
-console.warn('it is suggested that IPC calls be used instead of exposing functions on the window object');
-console.warn('using a non-minified react for development, swap with minified for production');
 console.log('starting react app');
-client.addEventHandler(menuEvent => console.log({ menuEvent }));
 const mount = document.querySelector('#react-mount');
 const store = createStore(reducer, defaultState, applyMiddleware(storeDebugMiddleware));
 initialize(store, client)

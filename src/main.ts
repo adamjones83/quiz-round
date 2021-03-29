@@ -3,12 +3,9 @@ import * as url from "url";
 import * as path from "path";
 import { getMacMenu } from './app/menu/mac-menu';
 import { getWindowsMenu } from './app/menu/windows-menu';
-
-
-/* const electron = require('electron');
-const url = require('url');
-const path = require('path');
-*/
+import { QuizRoundClient } from "./app/database/lib/data-layer";
+import { MENU_EVENT, DATA_REQUEST, DataRequestType } from './ipc-types';
+import { menuEvents } from "./app/menu/menu-handler";
 
 const isMac = process.platform === 'darwin';
 app.name = "Quiz-Round";
@@ -21,31 +18,43 @@ Menu.setApplicationMenu(menu);
 
 // create the main window
 app.on("ready", () => {
-  const mainWindow = new BrowserWindow({
-    width: 600,
-    height: 400,
-    webPreferences: {
-      preload: path.join(__dirname, "preload.js"),
-      // contextIsolation: true
-    },
-  });
-  mainWindow.loadURL(
-    url.format({
-      pathname: path.join(__dirname, "mainWindow.html"),
-      protocol: "file:",
-      slashes: true,
+    const mainWindow = new BrowserWindow({
+        width: 600,
+        height: 400,
+        webPreferences: {
+            preload: path.join(__dirname, "preload.js"),
+            // contextIsolation: true
+        }
+    });
+
+    // set up the menu event emitter
+    menuEvents.addHandler(evt => {
+        console.log('MENU_EVENT: ' + evt.name);
+        mainWindow.webContents.send(MENU_EVENT, evt.name);
     })
-  );
+
+    mainWindow.loadURL(url.format({
+        pathname: path.join(__dirname, "mainWindow.html"),
+        protocol: "file:",
+        slashes: true,
+    }));
 });
 
-/*
-ipcMain.on('asynchronous-message', (event, arg) => {
-    console.log('logging IPC message from main', event);
-    event.reply('asynchronous-reply', 'holla back async');
-});
-
-ipcMain.on('synchronous-message', (event, arg) => {
-    console.log('logging IPC message from main', event);
-    event.returnValue = 'holla back sync';
-});
-*/
+// set up electron quiz client IPC
+const client = QuizRoundClient('sample.db')
+ipcMain.on(DATA_REQUEST, async (evt,name:DataRequestType) => {
+    const responseChannel = `${DATA_REQUEST}:${name}`;
+    console.log(`DATA REQUEST: '${name}'`);
+    switch(name) {
+        case 'get-quizzers':
+            evt.reply(responseChannel, await client.getQuizzers());
+            break;
+        case 'get-teams':
+            evt.reply(responseChannel, await client.getTeams());
+            break;
+        case 'get-lineups':
+            evt.reply(responseChannel, await client.getLineups());
+            break;
+        default: break;
+    }
+})

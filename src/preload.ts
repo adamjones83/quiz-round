@@ -1,37 +1,29 @@
 import { promises as fs } from 'fs';
 import { ipcRenderer } from 'electron';
-import { Lineup, Quizzer, Team } from './types';
+import { Lineup, QuizClient, Quizzer, Team } from './types';
 import { QuizRoundClient } from './app/database/lib/data-layer';
 import { MenuEventHandler, menuEvents } from './app/menu/menu-handler';
-/*
-// example of sync IPC messaging
-console.log(ipcRenderer.sendSync('synchronous-message', 'dab'));
+import { DATA_REQUEST, DataRequestType, MENU_EVENT } from './ipc-types';
 
-// example of async IPC messaging
-ipcRenderer.on('asynchronous-reply', (event, arg) => {
-    console.log('we got a reply!', event);
+
+ipcRenderer.on(MENU_EVENT, (_,args) => {
+    window.console.log('Menu Event', args);
 });
-ipcRenderer.send('asynchronous-message', 'dab');
-*/
 
-async function readJson<T>(filepath:string) {
-    const data = await fs.readFile(filepath, { encoding: 'utf8' });
-    return JSON.parse(data) as T;
+function dataRequest<T>(name:DataRequestType) {
+    return () => new Promise<T>(res => {
+        ipcRenderer.once(`data-request:${name}`, (_,args) => {
+            res(args as T);    
+        });
+        ipcRenderer.send('data-request', name);
+    });
 }
-
-export interface ExposedFunctions {
-    getQuizzers: () => Promise<Quizzer[]>,
-    getTeams: () => Promise<Team[]>,
-    getLineups: () => Promise<Lineup[]>,
-    addEventHandler: (handler:MenuEventHandler)=>void
+function ElectronClient() : QuizClient {
+    return {
+        getQuizzers: dataRequest<Quizzer[]>('get-quizzers'),
+        getTeams: dataRequest<Team[]>('get-teams'),
+        getLineups: dataRequest<Lineup[]>('get-lineups')
+    }
 }
-const client = QuizRoundClient('sample.db')
-const exposed:ExposedFunctions = { 
-    getQuizzers: client.getQuizzers,
-    getTeams: client.getTeams,
-    getLineups: client.getLineups,
-    addEventHandler: menuEvents.addHandler
-}
-
-// TODO: this is BAD, use a context bridge instead which basically works the same but avoids a security bug SEE
-Object.assign(window, exposed);
+const client = ElectronClient();
+Object.assign(window, { client });
