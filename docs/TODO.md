@@ -1,43 +1,33 @@
 # TODO
-- round loads from db
-- change lineups to come from lookup rather than team "defaultLineup"
+- debug mode
+    * enables console.log debug statements for actions
+    * debug UI elements (question state, ...)
+    * self dispatching ACTIONS added to the window object
+- menu items: timeout, challenge, appeal, foul, show scores, select tournement
 - timers (answering, timeout, challenge, ...)
-- scores view
-- scores add/remove UI
-- audience view
-    * optional mirrored team orders
-    * hide action buttons
+- bonus points: see & implement all point types in types.ts
+- round start time, set round id, quiz/tournement id
+- hook up seat-connector, add seat handler function that takes a set of seat statuses
+- windows seat-connector support
+- ability to disable seats
+- scores view, add/remove
+- audience view - hide action buttons, optional mirrored team orders
 - general UI cleanup
 
-## HARDWARE/ENVIRONMENT
-- serial port (USB) based jump handler
-    * optional hardware-disable seats (allow for keyboard/virtual override)
-- virtual jumps via the internet (web sockets)?
-- hook up preload script for functions that use node functionality
-- data store for teams, players, lineups, round score history 
-    ** move sample data here ^^^
+## ROUND FLOW
+- start time set when app is opened
+- menu option to "Start Round"
+    * sets round id, start time
+    * if there's already scores, options to (clear, save, keep for this round)
+- menu option to pick quiz/tournement that updates quiz/tournement id
+- dialog for creating a tournament { name, startdate }, saves to db
+- dialog for setting the round title
+- when scores are saved at the end of a round the round { id, title } is saved with them
 
-## ACTIONS
-- game specific actions
-    * jump set
-    * correct (add score & advance question)
-    * error (add score item, set question state)
-    * correct bonus
-    * no bonus
-- game specific actions as self dispatching debug actions
-
-## UI
-- dev/debug mode switch
-    * enable debug display items in the view
-    * enable self-dispatching debug actions on global object
-- debug display for "question state"
-- switch to use team abbrName for round display
-- click to jump
-- answering popup with timer
-- ?? popup for timeout, challenge, appeal, rebuttal
-- popup for changing lineups
-    * select team (applies default lineup)
-    * select quizzers
+## JUMPING
+- jump handler takes mutiple sources
+- seat ids not necessarily tied to round UI
+- Seats, keyboard seats, virtual (via web), UI click
 
 ## QUESTION-STATE UI ACTIONS
 - before: timeout, challenge, rebuttal, jumpset
@@ -46,7 +36,6 @@
 - bonus: correct, error, cancel
 
 ## FEATURE IDEAS:
-- custom team colors
 - API endpoints to stream state
     * configurable port #
     * API key authentication
@@ -55,11 +44,12 @@
     * state gets streamed to a website
     * scoresheet view
     * scoreboard view (no action buttons, no lineup popup, optional reverse team ordering)
+    * seat states, jumped quizzer view
 - bonus redirect: allow specifying which seat should get the bonus from a given seat
 - virtual jump seat: trigger a jump via a button on a website
     * phone/tablet optimized view
 - delayed jump: put a X millisecond delay in the jump handler before dispatching actions
-- configurable correct before quiz out
-- configurable error before error out
-- randomized jump
-- phone/tablet view - team scores only, answering quizzer, admin popup
+- configurable correct count before quiz out
+- configurable error count before error out
+- meet & team as optional which treats the data as a practice round (possibly still saved in db?)
+- data saved in a centralized database like MySQL

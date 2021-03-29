@@ -1,3 +1,4 @@
+# Quiz Round Models
 ## Quizzer
 - id, name, abbrName, teamName
 - 'teamName' is used in lineup selection, all quizzers matching the teamName will be avilable to select
@@ -7,12 +8,17 @@
 
 ## Lineup
 - id, teamId, quizzer1, quizzer2, quizzer3, quizzer4, quizzer5, captainId, coCaptainId
-- teamId is used in lineup selection - when a team is selected the lineup with a matching teamId is autofilled
+- lineups in database are "default" lineups - when a team is selected in the lineup selection
+  the default lineup for that team is filled in
+- lineups set via the dialog are for the current quiz round
+- any quizzer in the system can be selected for a lineup but those with a matching teamName
+  will be at the top of the list for easy selection
+- captain, cocaptian are only available from the selected quizzers in the lineup
 
 ## Score
 - id, roundId, meetId, teamId, quizzerId, isTeamOnly, value, type, createdOn, isManual
 - isTeamOnly is a flag that indicates a score does not apply to the associated quizzer's personal score
-- isManual is a flag that indicates it was added manually - a kind of asterisk to show it was not part of the natural flow of a round, eg. a correction
+- isManual is a flag that indicates it was added manually - a kind of asterisk to show it was added as a manual correction
 
 ## Meet
 - id, name, startsOn
