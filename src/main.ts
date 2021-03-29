@@ -1,6 +1,7 @@
 import { app, BrowserWindow, Menu, MenuItemConstructorOptions, MenuItem, ipcMain } from "electron";
 import * as url from "url";
 import * as path from "path";
+import { } from './menu';
 import { getMacMenu } from './menu/mac-menu';
 import { getWindowsMenu } from './menu/windows-menu';
 
@@ -11,14 +12,14 @@ const path = require('path');
 */
 
 const isMac = process.platform === 'darwin';
-app.name = "Electron Demo";
+app.name = "Quiz-Round";
 app.disableHardwareAcceleration();
 // set up the menu - NOTE: this replaces the default menu and dev tools are no longer available, look into adding them
-/*
+
 const template: (MenuItemConstructorOptions | MenuItem)[] = isMac ? getMacMenu() : getWindowsMenu();
 const menu = Menu.buildFromTemplate(template);
 Menu.setApplicationMenu(menu);
-*/
+
 // create the main window
 app.on("ready", () => {
   const mainWindow = new BrowserWindow({

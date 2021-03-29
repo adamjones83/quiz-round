@@ -2,7 +2,7 @@ import { promises as fs } from 'fs';
 import { ipcRenderer } from 'electron';
 import { Lineup, Quizzer, Team } from './data/types';
 import { QuizRoundClient } from './database/lib/data-layer';
-
+import { MenuEventHandler, menuEvents } from './menu/menu-handler';
 /*
 // example of sync IPC messaging
 console.log(ipcRenderer.sendSync('synchronous-message', 'dab'));
@@ -22,13 +22,15 @@ async function readJson<T>(filepath:string) {
 export interface ExposedFunctions {
     getQuizzers: () => Promise<Quizzer[]>,
     getTeams: () => Promise<Team[]>,
-    getLineups: () => Promise<Lineup[]>
+    getLineups: () => Promise<Lineup[]>,
+    addEventHandler: (handler:MenuEventHandler)=>void
 }
 const client = QuizRoundClient('sample.db')
 const exposed:ExposedFunctions = { 
     getQuizzers: client.getQuizzers,
     getTeams: client.getTeams,
-    getLineups: client.getLineups 
+    getLineups: client.getLineups,
+    addEventHandler: menuEvents.addHandler
 }
 
 // TODO: this is BAD, use a context bridge instead which basically works the same but avoids a security bug SEE
