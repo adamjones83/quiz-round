@@ -1,5 +1,5 @@
-import { JumpHandler } from './actions/jump-handler';
-import { getSeatId } from './actions/seats';
+import { JumpHandler } from './redux/actions/jump-handler';
+import { getSeatId } from './redux/actions/seats';
 
 export function hookupKeyboardJumps(getState) {
     const jumpHandler = getState().get('jumpHandler') as JumpHandler;

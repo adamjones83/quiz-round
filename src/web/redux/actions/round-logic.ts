@@ -1,7 +1,7 @@
 import { createAction, ActionReducerMapBuilder, nanoid } from '@reduxjs/toolkit';
 import { List, updateIn } from 'immutable';
 import { RoundState } from '../reducer';
-import { Score, TeamId, QuizzerId } from '../../data/types';
+import { Score, TeamId, QuizzerId } from '../../../types';
 import { meetIdSelector, questionSelector, roundIdSelector } from '../selectors';
 
 export interface AnsweredInfo {

@@ -1,5 +1,5 @@
-import { setTimerHandler, setJumpHandler, updateQuizzers, updateTeams, updateLineups, getSeatId, setBonusSeatmaps, updateDefaultLineups } from './actions';
-import { addDebugActions } from './debug-actions';
+import { setTimerHandler, setJumpHandler, updateQuizzers, updateTeams, updateLineups, getSeatId, setBonusSeatmaps, updateDefaultLineups } from './redux/actions';
+import { addDebugActions } from './redux/debug-actions';
 import { shuffle, toLookup } from './utils';
 import { hookupKeyboardJumps } from './keyboard-jumps';
 import { ExposedFunctions } from '../preload';
@@ -39,4 +39,9 @@ export async function initialize(store, client:ExposedFunctions) {
 
     // add keyboard jump handler
     hookupKeyboardJumps(getState);
+
+    // hookup menu handlers
+    client.addEventHandler(menuEvent => {
+        console.log('MENU EVENT: ' + menuEvent.name);
+    })
 }

@@ -1,11 +1,11 @@
-import { App } from './components/App';
+import { App } from './web/components/App';
 import * as React from 'react';
 import * as ReactDOM from 'react-dom';
 import { Provider } from 'react-redux';
 import { applyMiddleware, createStore } from 'redux';
-import { defaultState, reducer } from './redux/reducer';
-import { initialize } from './redux/initialize';
-import { storeDebugMiddleware } from './redux/debug-middleware';
+import { defaultState, reducer } from './web/redux/reducer'
+import { initialize } from './web/initialize';
+import { storeDebugMiddleware } from './web/redux/debug-middleware';
 
 /* ENABLE EXPOSED NODE FUNCTIONALITY VIA PRELOAD FUNCTIONS AND/OR IPC CALLS
 import { ExposedFunctions } from './preload';

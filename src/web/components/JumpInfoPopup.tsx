@@ -1,7 +1,7 @@
 import * as React from "react";
 import { connect } from "react-redux";
 import { Dispatch } from "redux";
-import { QuestionState } from "../data/types";
+import { QuestionState } from "../../types";
 import { answerInfoSelector, bonusInfoSelector, jumpHandlerSelector, questionStateSelector, timeLeftSelector } from "../redux/selectors";
 import { JumpHandler, setQuestionState, answered, bonusAnswered, AnsweredInfo, answering, nextQuestion } from '../redux/actions';
 import { Popup } from "./Popup";

@@ -1,8 +1,8 @@
 import { createAction } from '@reduxjs/toolkit';
 import { ActionReducerMapBuilder } from '@reduxjs/toolkit';
-import { Lineup, QuizzerId, Seat, SeatId, SeatMap } from '../../data/types';
+import { Lineup, QuizzerId, Seat, SeatId, SeatMap } from '../../../types';
 import { List, Map, Set, updateIn } from 'immutable';
-import { swapLineup } from '../utils';
+import { swapLineup } from '../../utils';
 import { RoundState } from '../reducer';
 import { lineupsSelector } from '../selectors';
 

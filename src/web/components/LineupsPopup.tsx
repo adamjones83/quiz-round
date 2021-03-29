@@ -2,7 +2,7 @@ import * as React from "react";
 import { Popup } from "./Popup"
 import { connect } from 'react-redux';
 import { getIn, List, Map } from 'immutable';
-import { Lineup, Quizzer, QuizzerId, Team, TeamId } from '../data/types';
+import { Lineup, Quizzer, QuizzerId, Team, TeamId } from '../../types';
 import { RoundState } from "../redux/reducer";
 import { defaultLineupsSelector, lineupsSelector, quizzersSelector, showLineupsSelector, teamsSelector } from "../redux/selectors";
 import { Dispatch } from "redux";

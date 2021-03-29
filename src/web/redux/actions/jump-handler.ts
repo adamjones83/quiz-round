@@ -2,7 +2,7 @@ import { Dispatch } from 'redux';
 import { createAction } from '@reduxjs/toolkit';
 import { ActionReducerMapBuilder } from '@reduxjs/toolkit';
 import { Map, Set, List } from 'immutable';
-import { QuestionState, SeatId } from '../../data/types';
+import { QuestionState, SeatId } from '../../../types';
 import { RoundState } from '../reducer';
 import { jumpedSelector, questionStateSelector } from '../selectors';
 

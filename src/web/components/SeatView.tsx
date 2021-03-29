@@ -1,7 +1,7 @@
 import * as React from "react";
 import { connect } from 'react-redux';
 import { jumpedSelector, quizzersSelector, scoresSelector, seatsSelector } from "../redux/selectors";
-import { Quizzer, Score, Seat, SeatId } from '../data/types';
+import { Quizzer, Score, Seat, SeatId } from '../../types';
 import { Set, Map, List } from 'immutable';
 
 interface SeatViewProps {

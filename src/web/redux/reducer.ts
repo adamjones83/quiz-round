@@ -2,9 +2,9 @@ import { Map, List, Set } from 'immutable';
 import { Action} from 'redux';
 import { ActionReducerMapBuilder, createReducer, nanoid } from '@reduxjs/toolkit';
 import { addAdminActions, addSeatActions, addTimerActions, TimerHandler, addJumpActions, JumpHandler, getSeatId } from './actions';
-import { Team, Quizzer, Lineup, Seat, Score, QuizzerId, SeatId, TeamId, SeatMap } from '../data/types';
+import { Team, Quizzer, Lineup, Seat, Score, QuizzerId, SeatId, TeamId, SeatMap } from '../../types';
 import { addRoundLogicActions } from './actions/round-logic';
-import { TeamColor } from '../data/colors';
+import { TeamColor } from '../colors';
 
 export const defaultState = Map({
     roundId: nanoid(),

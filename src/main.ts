@@ -1,9 +1,8 @@
 import { app, BrowserWindow, Menu, MenuItemConstructorOptions, MenuItem, ipcMain } from "electron";
 import * as url from "url";
 import * as path from "path";
-import { } from './menu';
-import { getMacMenu } from './menu/mac-menu';
-import { getWindowsMenu } from './menu/windows-menu';
+import { getMacMenu } from './app/menu/mac-menu';
+import { getWindowsMenu } from './app/menu/windows-menu';
 
 
 /* const electron = require('electron');

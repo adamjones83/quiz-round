@@ -1,8 +1,8 @@
 import { promises as fs } from 'fs';
 import { ipcRenderer } from 'electron';
-import { Lineup, Quizzer, Team } from './data/types';
-import { QuizRoundClient } from './database/lib/data-layer';
-import { MenuEventHandler, menuEvents } from './menu/menu-handler';
+import { Lineup, Quizzer, Team } from './types';
+import { QuizRoundClient } from './app/database/lib/data-layer';
+import { MenuEventHandler, menuEvents } from './app/menu/menu-handler';
 /*
 // example of sync IPC messaging
 console.log(ipcRenderer.sendSync('synchronous-message', 'dab'));

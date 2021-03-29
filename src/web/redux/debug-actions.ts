@@ -1,6 +1,6 @@
 import { Dispatch } from 'redux';
 import { Map, List } from 'immutable';
-import { Score, ScoreType } from '../data/types';
+import { Score, ScoreType } from '../../types';
 import {
     addScore,
     getSeatId,

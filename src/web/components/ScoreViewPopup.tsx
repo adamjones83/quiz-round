@@ -2,7 +2,7 @@ import * as React from "react";
 import { Popup } from "./Popup"
 import { connect } from 'react-redux';
 import { List, Map } from 'immutable';
-import { Quizzer, Score, Team } from '../data/types';
+import { Quizzer, Score, Team } from '../../types';
 import { RoundState } from "../redux/reducer";
 import { quizzersSelector, scoresSelector, teamsSelector } from "../redux/selectors";
 

@@ -3,7 +3,7 @@ import { connect } from 'react-redux';
 import { colorSelector, teamScoreSelector, teamsSelector } from "../redux/selectors";
 import { SeatView } from "./SeatView";
 import { Map, List } from 'immutable';
-import { Lineup, Team } from '../data/types';
+import { Lineup, Team } from '../../types';
 import { getSeatId } from "../redux/actions";
 
 interface TeamViewProps {

@@ -1,4 +1,4 @@
-import { QuestionState, Team, Quizzer, Lineup, Seat, Score, TeamId, QuizzerId, SeatId, SeatMap } from '../data/types';
+import { QuestionState, Team, Quizzer, Lineup, Seat, Score, TeamId, QuizzerId, SeatId, SeatMap } from '../../types';
 import { Map, List, Set } from 'immutable';
 import { createSelector } from '@reduxjs/toolkit';
 import { JumpHandler, TimerHandler } from './actions';

@@ -1,4 +1,4 @@
-import { Quizzer, Team, Lineup } from '../../data/types';
+import { Quizzer, Team, Lineup } from '../../../types';
 import { nanoid } from 'nanoid';
 
 const quizzerNames: string[] = [

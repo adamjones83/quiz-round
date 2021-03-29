@@ -1,5 +1,5 @@
 import { Database, Statement } from 'sqlite3';
-import { Quizzer, Team, Lineup, Meet, Round, Score } from '../../data/types'
+import { Quizzer, Team, Lineup, Meet, Round, Score } from '../../../types'
 
 interface DbLineup {
     id:string,

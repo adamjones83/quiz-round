@@ -1,6 +1,6 @@
 import { createAction } from '@reduxjs/toolkit';
 import { ActionReducerMapBuilder } from '@reduxjs/toolkit';
-import { QuestionState, Team, Quizzer, Score, TeamId, Lineup, QuizzerId } from '../../data/types';
+import { QuestionState, Team, Quizzer, Score, TeamId, Lineup, QuizzerId } from '../../../types';
 import { Map, List, updateIn } from 'immutable';
 
 const SET_ROUND_TITLE = 'SET_ROUND_TITLE';

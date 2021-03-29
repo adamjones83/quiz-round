@@ -9,7 +9,7 @@ import {
     questionStateSelector,
     jumpHandlerSelector,
 } from "../redux/selectors";
-import { Lineup, QuestionState } from "../data/types";
+import { Lineup, QuestionState } from "../../types";
 import { JumpInfoPopup } from "./JumpInfoPopup";
 import { Dispatch } from "redux";
 import { JumpHandler } from "../redux/actions/jump-handler";

@@ -1,4 +1,4 @@
-import { Lineup } from '../data/types'
+import { Lineup } from '../types'
 
 export function swapLineup(lineup:Lineup, seatA:number, seatB:number) {
     console.log('Swapping lineup', lineup);
