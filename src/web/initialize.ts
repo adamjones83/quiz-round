@@ -1,8 +1,10 @@
-import { setTimerHandler, setJumpHandler, updateQuizzers, updateTeams, updateLineups, getSeatId, setBonusSeatmaps, updateDefaultLineups } from './redux/actions';
+import { setTimerHandler, setJumpHandler, updateQuizzers, updateTeams, updateLineups, getSeatId, setBonusSeatmaps, updateDefaultLineups, toggleLineupSelectionPopup, toggleShowScores } from './redux/actions';
 import { addDebugActions } from './redux/debug-actions';
 import { shuffle, toLookup } from './utils';
 import { hookupKeyboardJumps } from './keyboard-jumps';
 import { QuizClient } from '../types';
+import { menuEvents } from '../menu-handler';
+import { Dispatch } from 'redux';
 
 export async function initialize(store, client:QuizClient) {
     const { getState, dispatch } = store;
@@ -10,15 +12,16 @@ export async function initialize(store, client:QuizClient) {
     Object.assign(global, { getState, dispatch });
     addDebugActions(getState, dispatch);
 
+    // create jump & timer handlers
     dispatch(setTimerHandler(dispatch));
     dispatch(setJumpHandler(dispatch));
     
-    // load quizzers
+    // load quizzers, teams, default lineups
     const quizzers = toLookup(await client.getQuizzers(), a => a.id);
     dispatch(updateQuizzers(quizzers));
     const teams = toLookup(await client.getTeams(), a => a.id);
     dispatch(updateTeams(teams));
-    const lineups = toLookup(await client.getLineups(), a => a.teamId);
+    const lineups = toLookup(await client.getDefaultLineups(), a => a.teamId);
     dispatch(updateDefaultLineups(lineups));
 
     // load lineups for this quiz round
@@ -26,6 +29,33 @@ export async function initialize(store, client:QuizClient) {
     dispatch(updateLineups(teamIds.map(teamId => lineups[teamId])));
 
     // set seat maps for bonuses
+    dispatch(setBonusSeatmaps(defaultSeatMaps()));
+
+    // add keyboard jump handler
+    hookupKeyboardJumps(getState);
+
+    // respond to menu-command events
+    handleMenuActions(dispatch);
+
+    // write some warnings for TODO items
+    DisplayWarnings();
+}
+function handleMenuActions(dispatch:Dispatch) {
+    (window['MENU'] as typeof menuEvents).addHandler(type => {
+        switch(type) {
+            case 'pick-lineups':
+                dispatch(toggleLineupSelectionPopup());
+                break;
+            case 'show-scores':
+                dispatch(toggleShowScores());
+                break;
+            default:
+                console.warn('Unrecognized menu event - ' + type);
+                break;
+        }
+    });
+}
+function defaultSeatMaps() {
     const seatMaps = [];
     for(let i=0;i<5;i++) {
         seatMaps.push({ from: getSeatId(0, i), to: getSeatId(1, i) });
@@ -35,17 +65,8 @@ export async function initialize(store, client:QuizClient) {
         seatMaps.push({ from: getSeatId(2, i), to: getSeatId(0, i) });
         seatMaps.push({ from: getSeatId(2, i), to: getSeatId(1, i) });
     }
-    dispatch(setBonusSeatmaps(seatMaps));
-
-    // add keyboard jump handler
-    hookupKeyboardJumps(getState);
-
-    // respond to menu-command events
-
-    // write some warnings for TODO items
-    DisplayWarnings();
+    return seatMaps;
 }
-
 function DisplayWarnings() {
     console.warn('Hardware Rendering is currently disabled from main.ts');
     console.warn('Need to respond to menu-command events in initialize.ts');

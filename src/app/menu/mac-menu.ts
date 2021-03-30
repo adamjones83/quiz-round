@@ -1,10 +1,17 @@
 import { MenuItemConstructorOptions, MenuItem } from 'electron';
-import { menuEvents } from './menu-handler';
+import { MenuEventType } from '../../ipc-types';
+import { menuEvents } from '../../menu-handler';
 
 export function getMacMenu(): (MenuItemConstructorOptions | MenuItem)[] {
     return [getAppMenu(), getQuizMenu(), getDebugMenu()];
 }
 
+function appSubmenu(label:string, menuEvent:MenuEventType) {
+    return { label, click: () => menuEvents.raiseEvent(menuEvent) };
+}
+function raiseMenuEvent(menuEvent:MenuEventType) {
+    return () => menuEvents.raiseEvent(menuEvent);
+}
 function getAppMenu(): (MenuItemConstructorOptions | MenuItem) {
     return {
         label: "File",
@@ -23,10 +30,11 @@ function getQuizMenu(): (MenuItemConstructorOptions | MenuItem) {
     return {
         label: "Quiz",
         submenu: [
-            { 
-                label: 'Edit Lineups',
-                click: () => menuEvents.raiseEvent({name:'edit-lineups'})
-            }
+            appSubmenu('Edit Lineups', 'pick-lineups'),
+            appSubmenu('Timeout', 'timeout'),
+            appSubmenu('Foul', 'foul'),
+            appSubmenu('Challenge', 'challenge'),
+            appSubmenu('Appeal', 'appeal')
         ]
     }
 }

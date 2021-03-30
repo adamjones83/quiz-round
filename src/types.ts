@@ -66,7 +66,15 @@ export interface SeatMap {
 export interface QuizClient {
     getQuizzers: () => Promise<Quizzer[]>,
     getTeams: () => Promise<Team[]>,
-    getLineups: () => Promise<Lineup[]>
+    getDefaultLineups: () => Promise<Lineup[]>,
+    getMeets: () => Promise<Meet[]>,
+    
+    saveQuizzer: (quizzer:Quizzer) => Promise<void>,
+    saveTeam: (team:Team) => Promise<void>,
+    saveDefaultLineup: (lineup:Lineup) => Promise<void>,
+    saveMeet: (meet:Meet) => Promise<void>,
+    saveRound: (round:Round) => Promise<void>,
+    saveScores: (scores:Score[]) => Promise<void>
 }
 /*
     before: JumpSet, Timeout, Challenge/Appeal

@@ -23,8 +23,6 @@ function toLineup(dbLineup:DbLineup) {
     } as Lineup;
 }
 
-
-
 export function QuizRoundClient(filepath:string) {
     
     function runMany<T extends { [key:string]:unknown }|unknown[]>(command:string, paramObjItems: T[] ) {
@@ -120,8 +118,14 @@ export function QuizRoundClient(filepath:string) {
     }
     
     // TODO: impement this, but probably should insert an array of scores cause one at a time would be pointlessly slow
-    function insertScore(score:Score) {
-        throw 'not implemented'
+    function insertScores(scores:Score[]) {
+        return runMany("INSERT INTO scores (id, roundId, meetId, question, teamId, quizzerId, isTeamOnly, value, type, createdOn)" +
+            " values ($id,$roundId,$meetId,$question,$teamId,$quizzerId,$isTeamOnly,$value,$type,$createdOn)", 
+            scores.map(score => ({
+                $id:score.id, $roundId:score.roundId, $meetId:score.meetId,
+                $question:score.question, $teamId:score.teamId, $quizzerId:score.quizzerId,
+                $isTeamOnly:score.isTeamOnly, $value:score.value, $type:score.type, $createdOn:score.createdOn
+            })));
     }
     function getScores() {
         return getAllQuery<Score>("SELECT * FROM scores");
@@ -133,6 +137,6 @@ export function QuizRoundClient(filepath:string) {
         insertLineups, insertLineup, getLineups,
         insertMeet, getMeets,
         insertRound, getRounds,
-        insertScore, getScores
+        insertScores, getScores
     };
 }
