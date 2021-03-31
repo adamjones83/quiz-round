@@ -3,7 +3,9 @@
     * enables console.log debug statements for actions
     * debug UI elements (question state, ...)
     * self dispatching ACTIONS added to the window object
-- menu items: timeout, challenge, appeal, foul, show scores, select tournement
+- menu items: 
+    * timeout, challenge, appeal, foul, show scores, select tournement
+    * set question number
 - timers (answering, timeout, challenge, ...)
 - bonus points: see & implement all point types in types.ts
 - round start time, set round id, quiz/tournement id

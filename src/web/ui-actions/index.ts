@@ -1,5 +1,5 @@
 import { Dispatch } from "redux";
-import { QuestionState, QuizzerId, TeamId } from "../../types";
+import { QuestionState, QuizzerId, ScoreType, TeamId } from "../../types";
 import { nextQuestion, addScore, setQuestionState, AnsweredInfo } from '../redux/actions';
 import { jumpHandler, timerHandler } from '../handlers';
 import { questionSelector } from "../redux/selectors";
@@ -14,11 +14,14 @@ import { questionSelector } from "../redux/selectors";
 
 function answered(dispatch:Dispatch, teamId:TeamId,quizzerId:QuizzerId,bonus:boolean,correct:boolean) {
     // add score, set question, set question state, clear jump handler
+    const scoreType:ScoreType = correct ? (bonus ? 'bonus-correct':'correct') :
+      (bonus ? 'bonus-error' : 'error');
+    
     dispatch(addScore({
         isTeamOnly:bonus,
         teamId, quizzerId, 
         value: !correct ? 0 : bonus ? 10 : 20, 
-        type: 'correct'
+        type: scoreType
     }));
     if(correct || bonus) dispatch(nextQuestion());
     if(correct || bonus) {

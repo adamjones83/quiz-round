@@ -9,9 +9,6 @@ export function getMacMenu(): (MenuItemConstructorOptions | MenuItem)[] {
 function appSubmenu(label:string, menuEvent:MenuEventType) {
     return { label, click: () => menuEvents.raiseEvent(menuEvent) };
 }
-function raiseMenuEvent(menuEvent:MenuEventType) {
-    return () => menuEvents.raiseEvent(menuEvent);
-}
 function getAppMenu(): (MenuItemConstructorOptions | MenuItem) {
     return {
         label: "File",
@@ -34,7 +31,8 @@ function getQuizMenu(): (MenuItemConstructorOptions | MenuItem) {
             appSubmenu('Timeout', 'timeout'),
             appSubmenu('Foul', 'foul'),
             appSubmenu('Challenge', 'challenge'),
-            appSubmenu('Appeal', 'appeal')
+            appSubmenu('Appeal', 'appeal'),
+            appSubmenu('Show Scores', 'show-scores')
         ]
     }
 }

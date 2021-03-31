@@ -5,33 +5,51 @@ import { List, Map } from 'immutable';
 import { Quizzer, Score, Team } from '../../types';
 import { RoundState } from "../redux/reducer";
 import { quizzersSelector, scoresSelector, teamsSelector } from "../redux/selectors";
+import { Dispatch } from "redux";
+import { removeScore, toggleShowScores } from "../redux/actions";
 
 interface ScoreViewPopupProps {
     showScores: boolean,
     scores: List<Score>,
-    teams: Map<string,Team>,
-    quizzers: Map<string,Quizzer>
+    teams: Map<string, Team>,
+    quizzers: Map<string, Quizzer>,
+    dispatch: Dispatch
 }
-const mapStateToProps = (state:RoundState) => ({
+const mapStateToProps = (state: RoundState) => ({
     scores: scoresSelector(state),
     showScores: !!state.get('showScores'),
     teams: teamsSelector(state),
     quizzers: quizzersSelector(state)
 });
 
-export const ScoreViewPopup = connect(mapStateToProps)((props:ScoreViewPopupProps) => <Popup visible={ props.showScores }>
-    <div className={'score-popup'}>
-        {
-            props.scores.map((score,index) => <div key={index}>
-                { getScoreString(score, props.teams, props.quizzers) }
-            </div>)
-        }
-        <button style={{flex:1}}>Close</button>
-    </div>
-</Popup>);
-
-function getScoreString(score:Score, teams: Map<string,Team>, quizzers: Map<string,Quizzer>) {
-    const team = teams.get(score.teamId);
-    const quizzer = quizzers.get(score.quizzerId);
-    return `Question ${score.question} - ${quizzer && quizzer.name}(${team.name}): ${score.value}pts - ${score.type}`;
-}
+export const ScoreViewPopup = connect(mapStateToProps)((props: ScoreViewPopupProps) => {
+    const { teams, quizzers, showScores, scores, dispatch } = props;
+    return !showScores ? <Popup visible={false}><div /></Popup> : <Popup visible={showScores}>
+        <div className={'score-popup'}>
+            <table><thead>
+                <tr>
+                    <th>Q#</th>
+                    <th>Team</th>
+                    <th>Quizzer</th>
+                    <th>Type</th>
+                    <th>Value</th>
+                    <th>&nbsp;</th>
+                </tr>
+            </thead><tbody>
+                    {scores.map((score, index) => {
+                        const team = teams.get(score.teamId)?.name;
+                        const quizzer = quizzers.get(score.quizzerId)?.name;
+                        return <tr key={score.id}>
+                            <td>{score.question}</td>
+                            <td>{team}</td>
+                            <td>{quizzer}</td>
+                            <td>{score.type}</td>
+                            <td>{score.value}</td>
+                            <td><button onClick={() => dispatch(removeScore(index))} >Delete</button></td>
+                        </tr>
+                    })}
+                </tbody></table>
+            <button style={{ flex: 1 }} onClick={() => dispatch(toggleShowScores())}>Close</button>
+        </div>
+    </Popup>
+});
