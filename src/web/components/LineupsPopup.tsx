@@ -6,7 +6,7 @@ import { Lineup, Quizzer, QuizzerId, Team, TeamId } from '../../types';
 import { RoundState } from "../redux/reducer";
 import { defaultLineupsSelector, lineupsSelector, quizzersSelector, showLineupsSelector, teamsSelector } from "../redux/selectors";
 import { Dispatch } from "redux";
-import { setLineup, setLineupCaptain, setLineupCoCaptain, setLineupQuizzer } from "../redux/actions";
+import { setLineup, setLineupCaptain, setLineupCoCaptain, setLineupQuizzer, toggleLineupSelectionPopup } from "../redux/actions";
 
 interface LineupsPopupProps {
     showLineups: boolean,
@@ -14,8 +14,14 @@ interface LineupsPopupProps {
     quizzers: Map<string,Quizzer>,
     defaultLineups: Map<string,Lineup>,
     lineups: List<Lineup>,
-    dispatch: Dispatch
-}
+
+    teamChanged:(lineupNum:number, teamId:TeamId, defaultLineups:Map<TeamId,Lineup>)=>void,
+    quizzerChanged:(lineupNum:number, seatNum:number, quizzerId:QuizzerId)=>void,
+    captainChanged:(lineupNum:number, captainId:QuizzerId)=>void,
+    coCaptainChanged:(lineupNum:number, coCaptainId:QuizzerId)=>void,
+    closeDialog:()=>void
+};
+
 const mapStateToProps = (state:RoundState) => ({
     showLineups: showLineupsSelector(state),
     teams: teamsSelector(state),
@@ -24,8 +30,30 @@ const mapStateToProps = (state:RoundState) => ({
     lineups: lineupsSelector(state)
 });
 
-export const LineupsPopup = connect(mapStateToProps, dispatch => ({dispatch}))((props:LineupsPopupProps) => {
-    const { lineups, showLineups } = props;
+function mapDispatchToProps(dispatch:Dispatch) {
+    function teamChanged(lineupNum:number, teamId:TeamId, defaultLineups:Map<TeamId,Lineup>) {
+        dispatch(setLineup({ lineupNum, lineup: defaultLineups.get(teamId) }));
+    }
+    function quizzerChanged(lineupNum:number, seatNum:number, quizzerId:QuizzerId) {
+        dispatch(setLineupQuizzer({ lineupNum, seatNum, quizzerId }));
+    }
+    function captainChanged(lineupNum:number, captainId:QuizzerId) {
+        dispatch(setLineupCaptain({ lineupNum, captainId }));
+    }
+    function coCaptainChanged(lineupNum:number, coCaptainId:QuizzerId) {
+        dispatch(setLineupCoCaptain({ lineupNum, coCaptainId }));
+    }
+    function closeDialog() {
+        dispatch(toggleLineupSelectionPopup());
+    }
+    return { 
+        teamChanged, quizzerChanged, captainChanged, coCaptainChanged, closeDialog
+    }
+}
+
+
+export const LineupsPopup = connect(mapStateToProps, mapDispatchToProps)((props:LineupsPopupProps) => {
+    const { lineups, showLineups, closeDialog } = props;
     return <Popup visible={ showLineups }>
         <div className={'lineups-popup'}>
             <div className={'flex-row'}>
@@ -35,17 +63,19 @@ export const LineupsPopup = connect(mapStateToProps, dispatch => ({dispatch}))((
                     .map((lineup,index) => <LineupSelection  {...props} key={index} lineupNum={index} lineup={lineup} />)
             }
             </div>
-            <button>Close</button>
+            <button onClick={ closeDialog }>Close</button>
         </div>
     </Popup>
 });
 
-const LineupSelection = (props:{ dispatch:Dispatch, lineupNum:number, lineup:Lineup, teams:Map<string,Team>, quizzers:Map<string,Quizzer>, defaultLineups:Map<string,Lineup> }) => {
-    const { lineup, teams, quizzers, defaultLineups, lineupNum, dispatch } = props;
+const LineupSelection = (props:LineupsPopupProps & { lineup:Lineup, lineupNum:number}) => {
+    const { lineup, teams, quizzers, defaultLineups, lineupNum } = props;
+    const { teamChanged, quizzerChanged, captainChanged, coCaptainChanged } = props;
+    const { } = props;
     const team = teams.get(lineup.teamId);
     return <div style={{flex:1}} className={'lineup-selection'}>
         <div>Team:</div>
-        <select value={team?.id} onChange={ evt => LineupTeamChanged(dispatch, lineupNum, evt.target.value, defaultLineups) } >
+        <select value={team?.id} onChange={ evt => teamChanged(lineupNum, evt.target.value, defaultLineups) } >
             <option value=''>--none--</option>
             { teams.toList().map(t=><option key={t.id} value={t.id}>{t.name}</option>) }
         </select>
@@ -53,13 +83,13 @@ const LineupSelection = (props:{ dispatch:Dispatch, lineupNum:number, lineup:Lin
         { 
             [...new Array(5)]
                 .map((_,index) => quizzers.get(getIn(lineup, ['quizzerIds', index], '')))
-                .map((quizzer,index) => <select value={quizzer?.id} key={index} onChange={ evt => LineupQuizzerChanged(dispatch,lineupNum,index,evt.target.value)}>
+                .map((quizzer,index) => <select value={quizzer?.id} key={index} onChange={ evt => quizzerChanged(lineupNum,index,evt.target.value)}>
                     <option value=''>--none--</option>
                     { quizzers.toList().map(q =><option key={q.id} value={q.id}>{q.name}</option>) }
                 </select>)
         }
         <div>Captain:</div>
-        <select value={lineup.captainId} onChange={ evt => CaptainChanged(dispatch, lineupNum, evt.target.value) }>
+        <select value={lineup.captainId} onChange={ evt => captainChanged(lineupNum, evt.target.value) }>
             <option value=''>--none--</option>
             { (lineup.quizzerIds || [])
                 .map(id => quizzers.get(id))
@@ -67,7 +97,7 @@ const LineupSelection = (props:{ dispatch:Dispatch, lineupNum:number, lineup:Lin
                 .map(quizzer => <option key={quizzer.id} value={quizzer.id}>{quizzer.abbrName}</option> ) }
         </select>
         <div>Cocaption:</div>
-        <select value={lineup.coCaptainId} onChange={ evt => CoCaptainChanged(dispatch, lineupNum, evt.target.value) }>
+        <select value={lineup.coCaptainId} onChange={ evt => coCaptainChanged(lineupNum, evt.target.value) }>
             <option value=''>--none--</option>
             { (lineup.quizzerIds || [])
                 .map(id => quizzers.get(id))
@@ -75,18 +105,4 @@ const LineupSelection = (props:{ dispatch:Dispatch, lineupNum:number, lineup:Lin
                 .map(quizzer => <option key={quizzer.id} value={quizzer.id}>{quizzer.abbrName}</option> ) }
         </select>
     </div>
-}
-
-function LineupTeamChanged(dispatch:Dispatch, lineupNum:number, teamId:TeamId, defaultLineups:Map<TeamId,Lineup>) {
-    const lineup:Lineup = defaultLineups.get(teamId);
-    dispatch(setLineup({ lineupNum, lineup }));
-}
-function LineupQuizzerChanged(dispatch:Dispatch, lineupNum:number, seatNum:number, quizzerId:QuizzerId) {
-    dispatch(setLineupQuizzer({ lineupNum, seatNum, quizzerId }));
-}
-function CaptainChanged(dispatch:Dispatch, lineupNum:number, captainId:QuizzerId) {
-    dispatch(setLineupCaptain({ lineupNum, captainId }));
-}
-function CoCaptainChanged(dispatch:Dispatch, lineupNum:number, coCaptainId:QuizzerId) {
-    dispatch(setLineupCoCaptain({ lineupNum, coCaptainId }));
 }

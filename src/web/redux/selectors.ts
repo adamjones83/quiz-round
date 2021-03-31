@@ -1,7 +1,6 @@
 import { QuestionState, Team, Quizzer, Lineup, Seat, Score, TeamId, QuizzerId, SeatId, SeatMap } from '../../types';
 import { Map, List, Set } from 'immutable';
 import { createSelector } from '@reduxjs/toolkit';
-import { JumpHandler, TimerHandler } from './actions';
 
 export const showLineupsSelector = state => state.get('showLineups') as boolean;
 export const titleSelector = state => state.get('title') as string;
@@ -16,8 +15,6 @@ export const scoresSelector = state => state.get('scores') as List<Score>;
 export const jumpedSelector = state => state.get('jumped') as Set<SeatId>;
 export const timerNameSelector = state => state.get('timerName') as string;
 export const timeLeftSelector = state => state.get('timeLeft') as number;
-export const jumpHandlerSelector = state => state.get('jumpHandler') as JumpHandler;
-export const timerHandlerSelector = state => state.get('timerHandler') as TimerHandler;
 export const seatMapsSelector = state => state.get('bonusSeatMaps') as List<SeatMap>;
 export const showScoresSelector = state => !!state.get('showScores');
 export const colorSelector = state => state.get('colors') as List<string>;
@@ -62,9 +59,11 @@ export const bonusInfoSelector = createSelector(jumpedSelector, seatsSelector, q
             quizzerId: seat.quizzerId,
             name: quizzers.get(seat.quizzerId)?.abbrName,
             teamName: teams.get(seat.teamId)?.abbrName,
-            color: colors.get(lineups.findIndex(a => a.teamId === seat.teamId))
+            color: colors.get(lineups.findIndex(a => a?.teamId === seat.teamId))
     })));
-
+export const scorePartsSelecor = createSelector(roundIdSelector, meetIdSelector, questionSelector,
+    (roundId, meetId, question) => ({roundId, meetId, question}));
+    
 function getTeamScore(scores:Score[], teamId:string) {
     return scores
         .filter(a => a.teamId === teamId)

@@ -2,7 +2,7 @@ export type QuizzerId = string; // type alias to allow more explicit id types
 export type SeatId = string;
 export type TeamId = string;
 export type QuestionState = 'before'|'jumpset'|'answer'|'bonus';
-export type ScoreType = 'foul-odd'|'foul-even'|'timeout'|
+export type ScoreType = '-unknown-'|'foul-odd'|'foul-even'|'timeout'|
     'overruled-challenge'|'upheld-challenge'|'overruled-appeal'|'upheld-appeal'|
     'correct'|'error'|'bonus-correct'|'bonus-error'|
     'correct-quizout'|'error-errorout'|

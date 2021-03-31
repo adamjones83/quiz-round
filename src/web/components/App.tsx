@@ -6,51 +6,32 @@ import {
     titleSelector,
     lineupsSelector,
     questionSelector,
-    questionStateSelector,
-    jumpHandlerSelector,
+    questionStateSelector
 } from "../redux/selectors";
 import { Lineup, QuestionState } from "../../types";
 import { JumpInfoPopup } from "./JumpInfoPopup";
 import { Dispatch } from "redux";
-import { JumpHandler } from "../redux/actions/jump-handler";
 import { ScoreViewPopup } from "./ScoreViewPopup";
 import { LineupsPopup } from "./LineupsPopup";
+import { getAppUiActions } from "../ui-actions";
 
 const mapStateToProps = (state) => ({
     title: titleSelector(state),
     lineups: lineupsSelector(state),
     question: questionSelector(state),
-    questionState: questionStateSelector(state),
-    jumpHandler: jumpHandlerSelector(state),
+    questionState: questionStateSelector(state)
 });
 interface AppProps {
     title: string;
     lineups: List<Lineup>;
     question: number;
     questionState: QuestionState;
-    jumpHandler: JumpHandler;
     dispatch: Dispatch;
 }
-interface UiAction {
-    name: string;
-    click: () => void;
-}
-function getUiActions(
-    jumpHandler: JumpHandler,
-    questionState: QuestionState
-): UiAction[] {
-    switch (questionState) {
-        case "before":
-            return [{ name: "Set", click: () => jumpHandler.set() }];
-        case "jumpset":
-            return [{ name: "Clear", click: () => jumpHandler.clear() }];
-        default:
-            return [];
-    }
-}
+
 export const App = connect(mapStateToProps)((props: AppProps) => {
-    const { title, lineups, question, questionState, jumpHandler } = props;
-    const uiActions = getUiActions(jumpHandler, questionState);
+    const { title, lineups, question, questionState, dispatch } = props;
+    const uiActions = getAppUiActions(dispatch, questionState);
     return (
         <div>
             <LineupsPopup />
@@ -77,7 +58,7 @@ export const App = connect(mapStateToProps)((props: AppProps) => {
                 </div>
                 <div className={"actions flex-row"}>
                     {uiActions.map((a) => (
-                        <button key={a.name} onClick={a.click}>
+                        <button key={a.name} onClick={a.action}>
                             {a.name}
                         </button>
                     ))}

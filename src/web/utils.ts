@@ -29,3 +29,9 @@ export function toLookup<T>(items:T[], keySelector:(item:T)=>string) : Record<st
     for(const item of items) result[keySelector(item)] = item;
     return result;
 }
+export function getDateStr():string { 
+    return new Date().toISOString().substr(0,10); 
+}
+export function getDateTimeStr():string { 
+    return new Date().toISOString().substr(0,19); 
+}

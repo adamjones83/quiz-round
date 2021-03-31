@@ -1,4 +1,5 @@
-import { setTimerHandler, setJumpHandler, updateQuizzers, updateTeams, updateLineups, getSeatId, setBonusSeatmaps, updateDefaultLineups, toggleLineupSelectionPopup, toggleShowScores } from './redux/actions';
+import { updateQuizzers, updateTeams, updateLineups, getSeatId, setBonusSeatmaps, updateDefaultLineups, toggleLineupSelectionPopup, toggleShowScores } from './redux/actions';
+import { initJumpHandler, initTimerHandler } from './handlers';
 import { addDebugActions } from './redux/debug-actions';
 import { shuffle, toLookup } from './utils';
 import { hookupKeyboardJumps } from './keyboard-jumps';
@@ -12,10 +13,10 @@ export async function initialize(store, client:QuizClient) {
     Object.assign(global, { getState, dispatch });
     addDebugActions(getState, dispatch);
 
-    // create jump & timer handlers
-    dispatch(setTimerHandler(dispatch));
-    dispatch(setJumpHandler(dispatch));
-    
+    // initialize jump & timer handlers
+    initJumpHandler(dispatch);
+    initTimerHandler(dispatch);
+
     // load quizzers, teams, default lineups
     const quizzers = toLookup(await client.getQuizzers(), a => a.id);
     dispatch(updateQuizzers(quizzers));
@@ -32,7 +33,7 @@ export async function initialize(store, client:QuizClient) {
     dispatch(setBonusSeatmaps(defaultSeatMaps()));
 
     // add keyboard jump handler
-    hookupKeyboardJumps(getState);
+    hookupKeyboardJumps();
 
     // respond to menu-command events
     handleMenuActions(dispatch);

@@ -1,7 +1,7 @@
 import { Map, List, Set } from 'immutable';
 import { Action} from 'redux';
 import { ActionReducerMapBuilder, createReducer, nanoid } from '@reduxjs/toolkit';
-import { addAdminActions, addSeatActions, addTimerActions, TimerHandler, addJumpActions, JumpHandler, getSeatId } from './actions';
+import { addAdminActions, addSeatActions, addHandlerActions, getSeatId } from './actions';
 import { Team, Quizzer, Lineup, Seat, Score, QuizzerId, SeatId, TeamId, SeatMap } from '../../types';
 import { addRoundLogicActions } from './actions/round-logic';
 import { TeamColor } from '../colors';
@@ -21,8 +21,6 @@ export const defaultState = Map({
     bonusSeatMaps: List<SeatMap>(),
     scores: List<Score>(),
     isLatched: false,
-    jumpHandler: undefined as JumpHandler,
-    timerHandler: undefined as TimerHandler,
     jumped: Set<SeatId>(),
     timerName: '',
     timeLeft: 0,
@@ -33,8 +31,7 @@ export type RoundState = typeof defaultState;
 
 export const reducer = createReducer(defaultState, (builder:ActionReducerMapBuilder<RoundState>) => {
     addAdminActions(builder);
-    addJumpActions(builder);
-    addTimerActions(builder);
+    addHandlerActions(builder);
     addSeatActions(builder);
     addRoundLogicActions(builder);
     builder.addDefaultCase(defaultWarnHandler);
