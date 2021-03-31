@@ -1,7 +1,12 @@
 import { Dispatch } from 'redux';
 import { jumpChanged, jumpCompleted } from '../redux/actions';
 
+interface SeatStatus {
+    id:string,
+    jumped:boolean
+}
 export interface JumpHandler {
+    update: (statuses:SeatStatus[]) => void,
     jump: (id: string) => void,
     sit: (id: string) => void,
     set: () => void,
@@ -13,6 +18,21 @@ function CreateJumpHandler(dispatch: Dispatch): JumpHandler {
     let jumped = {};
     let latched = {};
 
+    /** batch update of seat statuses */
+    const update = (statuses:SeatStatus[]) => {
+        statuses.forEach(({id,jumped}) => {
+            if(jumped) jumped[id] = true;
+            else delete jumped[id];
+        });
+        const jumpedIds = Object.keys(jumped);
+        if(!isSet) {
+            dispatch(jumpChanged(jumpedIds));
+        } else if(jumpedIds.length && !Object.keys(latched).length) {
+            jumpedIds.forEach(id => latched[id] = true);
+            dispatch(jumpChanged(jumpedIds));
+            dispatch(jumpCompleted());
+        }
+    }
     const jump = id => {
         jumped[id] = true;
         if (!isSet) {
@@ -43,11 +63,12 @@ function CreateJumpHandler(dispatch: Dispatch): JumpHandler {
         isSet = false;
         dispatch(jumpChanged(Object.keys(jumped)));
     }
-    return { jump, sit, set, clear };
+    return { update, jump, sit, set, clear };
 }
 
 // hack - this has no-op actions until initialized with initJumpHandler
 export const jumpHandler: JumpHandler = {
+    update: () => { },
     jump: () => { },
     sit: () => { },
     set: () => { },
