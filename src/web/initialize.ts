@@ -1,4 +1,4 @@
-import { updateQuizzers, updateTeams, updateLineups, getSeatId, setBonusSeatmaps, updateDefaultLineups, toggleLineupSelectionPopup, toggleShowScores } from './redux/actions';
+import { updateQuizzers, updateTeams, updateLineups, getSeatId, setBonusSeatmaps, updateDefaultLineups, showPopup } from './redux/actions';
 import { initJumpHandler, initTimerHandler } from './handlers';
 import { addDebugActions } from './redux/debug-actions';
 import { shuffle, toLookup } from './utils';
@@ -6,6 +6,7 @@ import { hookupKeyboardJumps } from './keyboard-jumps';
 import { QuizClient } from '../types';
 import { menuEvents } from '../menu-handler';
 import { Dispatch } from 'redux';
+import { MenuEventType } from '../ipc-types';
 
 export async function initialize(store, client:QuizClient) {
     const { getState, dispatch } = store;
@@ -45,11 +46,13 @@ function handleMenuActions(dispatch:Dispatch) {
     (window['MENU'] as typeof menuEvents).addHandler(type => {
         switch(type) {
             case 'pick-lineups':
-                dispatch(toggleLineupSelectionPopup());
+                dispatch(showPopup('lineups'));
                 break;
             case 'show-scores':
-                dispatch(toggleShowScores());
+                dispatch(showPopup('scores'));
                 break;
+            case 'timeout':
+                dispatch(showPopup('timer'));
             default:
                 console.warn('Unrecognized menu event - ' + type);
                 break;

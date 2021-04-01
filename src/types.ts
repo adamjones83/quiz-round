@@ -8,6 +8,7 @@ export type ScoreType = '-unknown-'|'foul-odd'|'foul-even'|'timeout'|
     'correct-quizout'|'error-errorout'|
     '5+ error'|'error after 15'|
     '3rd person bonus'|'4th person bonus'|'5th person bonus';
+export type PopupType = 'none'|'scores'|'lineups'|'timer';
 export interface Round {
     id: string,
     meetId: string,

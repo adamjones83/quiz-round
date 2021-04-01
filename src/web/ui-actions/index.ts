@@ -71,3 +71,6 @@ export function getSingleAnswerUiActions(dispatch:Dispatch, teamId:string, quizz
         { name: 'Cancel', action: ()=>cancelJump(dispatch) }
     ];
 }
+export function getTimerPopupUiActions(dispatch:Dispatch): UiAction[] {
+    return [];
+}

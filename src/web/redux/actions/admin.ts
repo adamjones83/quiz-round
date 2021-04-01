@@ -1,6 +1,6 @@
 import { createAction } from '@reduxjs/toolkit';
 import { ActionReducerMapBuilder } from '@reduxjs/toolkit';
-import { QuestionState, Team, Quizzer, Score, TeamId, Lineup, QuizzerId, ScoreType } from '../../../types';
+import { QuestionState, Team, Quizzer, Score, TeamId, Lineup, QuizzerId, ScoreType, PopupType } from '../../../types';
 import { Map, List, updateIn } from 'immutable';
 import { RoundState } from '../reducer';
 import { scorePartsSelecor } from '../selectors';
@@ -19,8 +19,9 @@ const CHANGE_TEAM_NAME = 'CHANGE_TEAM_NAME';
 const CHANGE_QUIZZER_NAME = 'CHANGE_QUIZZER_NAME';
 const NEXT_QUESTION = 'NEXT_QUESTION';
 const PREV_QUESTION = 'PREV_QUESTION';
-const TOGGLE_SHOW_SCORES = 'TOGGLE_SHOW_SCORES';
-       
+const SHOW_POPUP = 'SHOW_POPUP';
+const CLOSE_POPUP = 'CLOSE_POPUP';
+
 export const setRoundTitle = createAction<string>(SET_ROUND_TITLE);
 export const setQuestion = createAction<number>(SET_QUESTION);
 export const setQuestionState = createAction<QuestionState>(SET_QUESTION_STATE);
@@ -33,7 +34,8 @@ export const changeTeamName = createAction<{ id:string, name:string }>(CHANGE_TE
 export const changeQuizzerName = createAction<{ id:string, name:string }>(CHANGE_QUIZZER_NAME);
 export const nextQuestion = createAction(NEXT_QUESTION);
 export const prevQuestion = createAction(PREV_QUESTION);
-export const toggleShowScores = createAction(TOGGLE_SHOW_SCORES);
+export const showPopup = createAction<PopupType>(SHOW_POPUP);
+export const closePopup = createAction(CLOSE_POPUP);
 
 function toScore(info:Partial<Score>, state:RoundState):Score {
     const { roundId, meetId, question } = scorePartsSelecor(state);
@@ -65,5 +67,6 @@ export function addAdminActions(builder:ActionReducerMapBuilder<Map<string,unkno
             updateIn(state, ['quizzers'], (map:Map<string,Quizzer>) => map.update(id, quizzer => ({ ...quizzer, name }))))
         .addCase(nextQuestion, state => state.set('question', state.get('question') as number + 1))
         .addCase(prevQuestion, state => state.set('question', Math.max(1, state.get('question') as number - 1)))
-        .addCase(toggleShowScores, state => updateIn(state, ['showScores'], value => !value))
+        .addCase(showPopup, (state,action) => updateIn(state, ['showPopup'], value => value !== 'none' ? value : action.payload))
+        .addCase(closePopup, state => state.set('showPopup', 'none'))
 }

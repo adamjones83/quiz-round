@@ -17,7 +17,6 @@ const SET_LINEUP_COCAPTAIN = 'SET_LINEUP_COCAPTAIN';
 const SWAP_QUIZZERS = 'SWAP_QUIZZERS';
 const SET_BONUS_SEATMAPS = 'SET_BONUS_SEATMAPS'
 
-export const toggleLineupSelectionPopup = createAction(TOGGLE_LINEUP_SELECTION_POPUP);
 export const toggleSeatEnabled = createAction<SeatId>(TOGGLE_SEAT_ENABLED);
 export const updateLineups = createAction<Lineup[]>(UPDATE_LINEUPS);
 export const setLineup = createAction<{ lineupNum:number, lineup:Lineup }>(SET_LINEUP);
@@ -30,7 +29,6 @@ export const setBonusSeatmaps = createAction<SeatMap[]>(SET_BONUS_SEATMAPS);
 
 export function addSeatActions(builder:ActionReducerMapBuilder<RoundState>) {
     builder
-        .addCase(toggleLineupSelectionPopup, state => updateIn(state, ['showLineups'], value => !value))
         .addCase(toggleSeatEnabled, (state, { payload })=> updateIn(state, ['seats',payload], (seat:Seat) => ({
             ...seat,
             isEnabled: !seat.isEnabled

@@ -1,8 +1,8 @@
-import { QuestionState, Team, Quizzer, Lineup, Seat, Score, TeamId, QuizzerId, SeatId, SeatMap } from '../../types';
+import { QuestionState, Team, Quizzer, Lineup, Seat, Score, 
+    TeamId, QuizzerId, SeatId, SeatMap, PopupType } from '../../types';
 import { Map, List, Set } from 'immutable';
 import { createSelector } from '@reduxjs/toolkit';
 
-export const showLineupsSelector = state => state.get('showLineups') as boolean;
 export const titleSelector = state => state.get('title') as string;
 export const questionSelector = state => state.get('question') as number;
 export const questionStateSelector = state => state.get('questionState') as QuestionState;
@@ -16,7 +16,7 @@ export const jumpedSelector = state => state.get('jumped') as Set<SeatId>;
 export const timerNameSelector = state => state.get('timerName') as string;
 export const timeLeftSelector = state => state.get('timeLeft') as number;
 export const seatMapsSelector = state => state.get('bonusSeatMaps') as List<SeatMap>;
-export const showScoresSelector = state => !!state.get('showScores');
+export const showPopupSelector = state => state.get('showPopup') as PopupType;
 export const colorSelector = state => state.get('colors') as List<string>;
 export const roundIdSelector = state => state.get('roundId') as string;
 export const meetIdSelector = state => state.get('meetId') as string;

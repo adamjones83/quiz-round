@@ -2,7 +2,8 @@ import { Map, List, Set } from 'immutable';
 import { Action} from 'redux';
 import { ActionReducerMapBuilder, createReducer, nanoid } from '@reduxjs/toolkit';
 import { addAdminActions, addSeatActions, addHandlerActions, getSeatId } from './actions';
-import { Team, Quizzer, Lineup, Seat, Score, QuizzerId, SeatId, TeamId, SeatMap } from '../../types';
+import { Team, Quizzer, Lineup, Seat, Score, 
+    QuizzerId, SeatId, TeamId, SeatMap, QuestionState, PopupType } from '../../types';
 import { addRoundLogicActions } from './actions/round-logic';
 import { TeamColor } from '../colors';
 
@@ -11,7 +12,7 @@ export const defaultState = Map({
     meetId: nanoid(),
     title: 'Quiz Round 1',
     question: 1,
-    questionState: 'before',
+    questionState: 'before' as QuestionState,
     teams: Map<TeamId,Team>(), 
     quizzers: Map<QuizzerId,Quizzer>(),
     defaultLineups: Map<TeamId,Lineup>(),
@@ -24,8 +25,7 @@ export const defaultState = Map({
     jumped: Set<SeatId>(),
     timerName: '',
     timeLeft: 0,
-    showScores: false,
-    showLineups: false
+    showPopup: 'none' as PopupType
 });
 export type RoundState = typeof defaultState;
 

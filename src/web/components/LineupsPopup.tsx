@@ -4,9 +4,9 @@ import { connect } from 'react-redux';
 import { getIn, List, Map } from 'immutable';
 import { Lineup, Quizzer, QuizzerId, Team, TeamId } from '../../types';
 import { RoundState } from "../redux/reducer";
-import { defaultLineupsSelector, lineupsSelector, quizzersSelector, showLineupsSelector, teamsSelector } from "../redux/selectors";
+import { defaultLineupsSelector, lineupsSelector, quizzersSelector, showPopupSelector, teamsSelector } from "../redux/selectors";
 import { Dispatch } from "redux";
-import { setLineup, setLineupCaptain, setLineupCoCaptain, setLineupQuizzer, toggleLineupSelectionPopup } from "../redux/actions";
+import { closePopup, setLineup, setLineupCaptain, setLineupCoCaptain, setLineupQuizzer } from "../redux/actions";
 
 interface LineupsPopupProps {
     showLineups: boolean,
@@ -23,7 +23,7 @@ interface LineupsPopupProps {
 };
 
 const mapStateToProps = (state:RoundState) => ({
-    showLineups: showLineupsSelector(state),
+    showLineups: showPopupSelector(state) === 'lineups',
     teams: teamsSelector(state),
     quizzers: quizzersSelector(state),
     defaultLineups: defaultLineupsSelector(state),
@@ -44,7 +44,7 @@ function mapDispatchToProps(dispatch:Dispatch) {
         dispatch(setLineupCoCaptain({ lineupNum, coCaptainId }));
     }
     function closeDialog() {
-        dispatch(toggleLineupSelectionPopup());
+        dispatch(closePopup());
     }
     return { 
         teamChanged, quizzerChanged, captainChanged, coCaptainChanged, closeDialog

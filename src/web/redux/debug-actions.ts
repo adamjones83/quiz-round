@@ -6,10 +6,9 @@ import {
     getSeatId,
     nextQuestion,
     prevQuestion,
+    showPopup,
     swapQuizzers,
-    toggleLineupSelectionPopup,
-    toggleSeatEnabled,
-    toggleShowScores
+    toggleSeatEnabled
 } from './actions';
 import { nanoid } from 'nanoid';
 
@@ -20,7 +19,7 @@ function createScore(question:number, teamId:string, quizzerId:string, isTeamOnl
 }
 export function addDebugActions(getState,dispatch:Dispatch) {
     const ACTIONS = {
-        toggleShowLineups: () => dispatch(toggleLineupSelectionPopup()),
+        toggleShowLineups: () => dispatch(showPopup('lineups')),
         disableSeat: (team,seat) => dispatch(toggleSeatEnabled(getSeatId(team,seat))),
         nextQuestion: () => dispatch(nextQuestion()),
         prevQuestion: () => dispatch(prevQuestion()),
@@ -48,7 +47,7 @@ export function addDebugActions(getState,dispatch:Dispatch) {
             scores.forEach(a => console.log(a));
         },
         showScores: () => {
-            dispatch(toggleShowScores());
+            dispatch(showPopup('scores'));
         }
     };
     Object.assign(global, { ACTIONS });

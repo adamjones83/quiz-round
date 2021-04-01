@@ -4,9 +4,9 @@ import { connect } from 'react-redux';
 import { List, Map } from 'immutable';
 import { Quizzer, Score, Team } from '../../types';
 import { RoundState } from "../redux/reducer";
-import { quizzersSelector, scoresSelector, teamsSelector } from "../redux/selectors";
+import { quizzersSelector, scoresSelector, showPopupSelector, teamsSelector } from "../redux/selectors";
 import { Dispatch } from "redux";
-import { removeScore, toggleShowScores } from "../redux/actions";
+import { closePopup, removeScore, showPopup } from "../redux/actions";
 
 interface ScoreViewPopupProps {
     showScores: boolean,
@@ -17,7 +17,7 @@ interface ScoreViewPopupProps {
 }
 const mapStateToProps = (state: RoundState) => ({
     scores: scoresSelector(state),
-    showScores: !!state.get('showScores'),
+    showScores: showPopupSelector(state) === 'scores',
     teams: teamsSelector(state),
     quizzers: quizzersSelector(state)
 });
@@ -49,7 +49,7 @@ export const ScoreViewPopup = connect(mapStateToProps)((props: ScoreViewPopupPro
                         </tr>
                     })}
                 </tbody></table>
-            <button style={{ flex: 1 }} onClick={() => dispatch(toggleShowScores())}>Close</button>
+            <button style={{ flex: 1 }} onClick={() => dispatch(closePopup())}>Close</button>
         </div>
     </Popup>
 });
