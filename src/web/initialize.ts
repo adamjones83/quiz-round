@@ -1,5 +1,5 @@
 import { updateQuizzers, updateTeams, updateLineups, getSeatId, setBonusSeatmaps, updateDefaultLineups, showPopup } from './redux/actions';
-import { initJumpHandler, initTimerHandler } from './handlers';
+import { initJumpHandler, initTimerHandler, timerHandler } from './handlers';
 import { addDebugActions } from './redux/debug-actions';
 import { shuffle, toLookup } from './utils';
 import { hookupKeyboardJumps } from './keyboard-jumps';
@@ -53,6 +53,7 @@ function handleMenuActions(dispatch:Dispatch) {
                 break;
             case 'timeout':
                 dispatch(showPopup('timer'));
+                timerHandler.setTimer('Timeout', 30);
             default:
                 console.warn('Unrecognized menu event - ' + type);
                 break;

@@ -1,6 +1,6 @@
 import { Dispatch } from "redux";
 import { QuestionState, QuizzerId, ScoreType, TeamId } from "../../types";
-import { nextQuestion, addScore, setQuestionState, AnsweredInfo } from '../redux/actions';
+import { nextQuestion, addScore, setQuestionState, AnsweredInfo, closePopup } from '../redux/actions';
 import { jumpHandler, timerHandler } from '../handlers';
 import { questionSelector } from "../redux/selectors";
 
@@ -72,5 +72,8 @@ export function getSingleAnswerUiActions(dispatch:Dispatch, teamId:string, quizz
     ];
 }
 export function getTimerPopupUiActions(dispatch:Dispatch): UiAction[] {
-    return [];
+    return [
+        { name: 'Reset', action: ()=> createTimer('timer', 30) },
+        { name: 'Close', action: ()=>{ clearTimer(); dispatch(closePopup()); } }
+    ];
 }

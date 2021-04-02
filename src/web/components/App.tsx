@@ -14,6 +14,7 @@ import { Dispatch } from "redux";
 import { ScoreViewPopup } from "./ScoreViewPopup";
 import { LineupsPopup } from "./LineupsPopup";
 import { getAppUiActions } from "../ui-actions";
+import { TimerPopup } from "./TimerPopup";
 
 const mapStateToProps = (state) => ({
     title: titleSelector(state),
@@ -34,6 +35,7 @@ export const App = connect(mapStateToProps)((props: AppProps) => {
     const uiActions = getAppUiActions(dispatch, questionState);
     return (
         <div>
+            <TimerPopup />
             <LineupsPopup />
             <ScoreViewPopup />
             <JumpInfoPopup />
