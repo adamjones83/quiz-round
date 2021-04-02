@@ -4,7 +4,7 @@ import { addDebugActions } from './redux/debug-actions';
 import { shuffle, toLookup } from './utils';
 import { hookupKeyboardJumps } from './keyboard-jumps';
 import { QuizClient } from '../types';
-import { menuEvents } from '../menu-handler';
+import { menuEvents } from '../ipc-events';
 import { Dispatch } from 'redux';
 import { MenuEventType } from '../ipc-types';
 

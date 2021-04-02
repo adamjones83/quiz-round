@@ -1,5 +1,5 @@
 import * as SerialPort from 'serialport';
-import { ReadLine } from '@serialport/parser-readline'
+import { exec } from 'child_process';
 
 /*  == HARDWARE EXPLANATION ==
     Each seat has a bit in a four digit hex number
@@ -7,28 +7,28 @@ import { ReadLine } from '@serialport/parser-readline'
     When sitting the circut is closed and the bit has the value 1
     Seat chains not connected are all set to high bits
 */
-
-export async function SeatHandler() {
-    const path = '/dev/usbmodem11301';
+interface SeatStatus { seatId:string, isJumped:boolean }
+export async function SeatHandler(onStatusChange:(seats:SeatStatus[])=>void, onBogo:(loops:number)=>void) {
+    const path = await getUsbPath();
     const port = await connect(path);
-    
-    const parser = port.pipe(new ReadLine({ delimiter: '\r\n' }))
+    const readline = SerialPort.parsers.Readline;
+    const parser = port.pipe(new readline({ delimiter: '\r\n' }))
     parser.on('data', (data:Buffer) => {
         const line = data.toString('utf8');
         if(line.startsWith('o=')) {
-            const status = getSeatStatus(line);
-            console.log('seated: ' + status
-                .filter(a => !a.isJumped)
-                .map(a=>a.seatNum)
-                .join(', '));    
+            updateStatuses(line,onStatusChange);
         } else {
-            const bogo = getBogoLoops(line);
-            console.log(`Bogo loops: ${currentBogoLoops}`);
+            updateBogoLoops(line,onBogo);
         }
     })
     port.on("error", err => console.error(err));
 }
 
+function getUsbPath(): Promise<string> {
+    return new Promise<string>((res,rej) => exec('ls -1 /dev/cu.*usbmodem*', 
+        (err, stdout) => { if(err) rej(err); else res(stdout); }))
+        .then(stdout => stdout.split('\n')[0]);
+}
 function connect(path:string) {
     return new Promise<SerialPort>((res,rej) => {
         const port = new SerialPort(path,{
@@ -44,31 +44,63 @@ function connect(path:string) {
 }
 
 const dataRegex = /^o=([0-9A-F]{1,4}) /;
-let currentStatus:{ teamNum:number, seatNum:number, isJumped:boolean }[] = [];
-function getSeatStatus(data:string) {
+let prevStatusNum = 0;
+function updateStatuses(data:string, onStatusChange:(seats:SeatStatus[])=>void) {
     const statusUpdate = dataRegex.exec(data)?.[1];
     const ffs = 'FFF'
-    if(statusUpdate) {
-        // ensures the update is a parsed 4 digit hex integer
-        const seatBits = parseInt(ffs.substr(0,4-statusUpdate.length) + statusUpdate, 16);
-        
-        // put all 15 mask values here to calculate all seats statuses
-        currentStatus = [0x40, 0x20, 0x10, 0x08, 0x04]
-            .map((mask,seatNum) => ({
-                teamNum: Math.floor(seatNum/5) + 1,
-                seatNum: (seatNum % 5) + 1,
-                isJumped: !(seatBits & mask)
-            }));
+    const statusNum = parseInt(ffs.substr(0,4-statusUpdate.length) + statusUpdate, 16);
+    if(statusNum !== prevStatusNum) {
+        const statuses = getStatuses(statusNum);
+        onStatusChange(statuses);
     }
-    return currentStatus;
-};
+}
+function getStatuses(status:number) {
+    const seatMapping = [
+        0x4000, 0x2000, 0x1000, 0x0800, 0x0400,
+        0x0200, 0x0100, 0x0080, 0x0040, 0x0020,
+        0x0010, 0x0008, 0x0004, 0x0002, 0x0001
+    ];
+
+    return seatMapping.map((a,i) => ({
+        seatId: `Team ${Math.floor(i/5) + 1} - Seat ${(i%5)+1}`,
+        isJumped: !(a & status)
+    }));
+}
 
 const bogoRegex = /BogoLoops ([0-9]{1,7})/
-let currentBogoLoops = -1;
-function getBogoLoops(data:string) {
+function updateBogoLoops(data:string, onBogo:(loops:number)=>void) {
     const bogoLoops = bogoRegex.exec(data)?.[1];
-    if(bogoLoops) {
-        currentBogoLoops = parseInt(bogoLoops);
-    }
-    return currentBogoLoops;
+    try { onBogo(parseInt(bogoLoops)) }
+    catch { onBogo(-1); }
 }
+
+
+
+// 7FFF - all disconnected
+
+// Green
+// 03FF - none
+// 43FF - seat 1 down, 0x4000
+// 23FF - seat 2 down, 0x2000
+// 13FF - seat 3 down, 0x1000
+// 0BFF - seat 4 down, 0x0800
+// 07FF - seat 5 down, 0x0400
+
+// Blue
+// 7C1F - none
+// 7E1F - seat 1 down, 0x0200
+// 7D1F - seat 2 down, 0x0100
+// 7C9F - seat 3 down, 0x0080
+// 7C5F - seat 4 down, 0x0040
+// 7C3F - seat 5 down, 0x0020
+
+// Red (has seat order reversed...)
+// 7FE0 - none (all up)
+// 7FE1 - seat 1 down, 0x0001
+// 7FE2 - seat 2 down, 0x0002
+// 7FE4 - seat 3 down, 0x0004
+// 7FE8 - seat 4 down, 0x0008
+// 7FF0 - seat 5 down, 0x0010
+
+// NOTE: seat down is a 1 (circuit closed)
+// when disconnected all circuts closed (bits ON=1)

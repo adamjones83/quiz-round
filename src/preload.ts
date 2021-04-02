@@ -1,7 +1,7 @@
 import { ipcRenderer, contextBridge } from 'electron';
 import { MENU_EVENT, MenuEventType } from './ipc-types';
 import { ElectronClient } from './app/electron-client';
-import { menuEvents } from './menu-handler';
+import { menuEvents } from './ipc-events';
 
 ipcRenderer.on(MENU_EVENT, (_,args) => menuEvents.raiseEvent(args as MenuEventType));
 

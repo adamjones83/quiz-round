@@ -1,6 +1,6 @@
 import { MenuItemConstructorOptions, MenuItem } from 'electron';
 import { MenuEventType } from '../../ipc-types';
-import { menuEvents } from '../../menu-handler';
+import { menuEvents } from '../../ipc-events';
 
 export function getMacMenu(): (MenuItemConstructorOptions | MenuItem)[] {
     return [getAppMenu(), getQuizMenu(), getDebugMenu()];

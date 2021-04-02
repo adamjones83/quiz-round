@@ -7,6 +7,7 @@
     "start": "electron target/main",
     "build": "cp -R src/static/* target; tsc; npx webpack",
     "copy-styles": "cp src/static/mainWindow.css target/mainWindow.css",
+    "fix-serialport": "$(npm bin)/electron-rebuild -o serialport",
     "test": "jest"
   },
   "author": "",
@@ -36,6 +37,7 @@
     "@testing-library/react": "^11.2.3",
     "@types/jest": "^26.0.20",
     "babel-loader": "^8.2.2",
+    "electron-rebuild": "^2.3.5",
     "jest": "^26.6.3",
     "react": "^17.0.1",
     "react-dom": "^17.0.1",
