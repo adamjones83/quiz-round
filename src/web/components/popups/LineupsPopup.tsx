@@ -1,15 +1,13 @@
-import * as React from "react";
-import { Popup } from "./Popup"
+import * as React from 'react';
+import { closePopup, setLineup, setLineupCaptain, setLineupCoCaptain, setLineupQuizzer } from '../../redux/actions';
+import { defaultLineupsSelector, lineupsSelector, quizzersSelector, teamsSelector } from '../../redux/selectors';
+import { Lineup, Quizzer, QuizzerId, Team, TeamId } from '../../../types';
+import { RoundState } from '../../redux/reducer';
 import { connect } from 'react-redux';
+import { Dispatch } from 'redux';
 import { getIn, List, Map } from 'immutable';
-import { Lineup, Quizzer, QuizzerId, Team, TeamId } from '../../types';
-import { RoundState } from "../redux/reducer";
-import { defaultLineupsSelector, lineupsSelector, quizzersSelector, showPopupSelector, teamsSelector } from "../redux/selectors";
-import { Dispatch } from "redux";
-import { closePopup, setLineup, setLineupCaptain, setLineupCoCaptain, setLineupQuizzer } from "../redux/actions";
 
 interface LineupsPopupProps {
-    showLineups: boolean,
     teams: Map<string,Team>,
     quizzers: Map<string,Quizzer>,
     defaultLineups: Map<string,Lineup>,
@@ -20,10 +18,9 @@ interface LineupsPopupProps {
     captainChanged:(lineupNum:number, captainId:QuizzerId)=>void,
     coCaptainChanged:(lineupNum:number, coCaptainId:QuizzerId)=>void,
     closeDialog:()=>void
-};
+}
 
 const mapStateToProps = (state:RoundState) => ({
-    showLineups: showPopupSelector(state) === 'lineups',
     teams: teamsSelector(state),
     quizzers: quizzersSelector(state),
     defaultLineups: defaultLineupsSelector(state),
@@ -53,25 +50,22 @@ function mapDispatchToProps(dispatch:Dispatch) {
 
 
 export const LineupsPopup = connect(mapStateToProps, mapDispatchToProps)((props:LineupsPopupProps) => {
-    const { lineups, showLineups, closeDialog } = props;
-    return <Popup visible={ showLineups }>
-        <div className={'lineups-popup'}>
-            <div className={'flex-row'}>
-            {
-                [...new Array(3)]
-                    .map((_,index) => lineups.get(index) || { } as Lineup)
-                    .map((lineup,index) => <LineupSelection  {...props} key={index} lineupNum={index} lineup={lineup} />)
-            }
-            </div>
-            <button onClick={ closeDialog }>Close</button>
+    const { lineups, closeDialog } = props;
+    return <div className={'lineups-popup'}>
+        <div className={'flex-row'}>
+        {
+            [...new Array(3)]
+                .map((_,index) => lineups.get(index) || { } as Lineup)
+                .map((lineup,index) => <LineupSelection  {...props} key={index} lineupNum={index} lineup={lineup} />)
+        }
         </div>
-    </Popup>
+        <button onClick={ closeDialog }>Close</button>
+    </div>
 });
 
 const LineupSelection = (props:LineupsPopupProps & { lineup:Lineup, lineupNum:number}) => {
     const { lineup, teams, quizzers, defaultLineups, lineupNum } = props;
     const { teamChanged, quizzerChanged, captainChanged, coCaptainChanged } = props;
-    const { } = props;
     const team = teams.get(lineup.teamId);
     return <div style={{flex:1}} className={'lineup-selection'}>
         <div>Team:</div>

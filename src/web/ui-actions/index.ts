@@ -26,11 +26,13 @@ function answered(dispatch:Dispatch, teamId:TeamId,quizzerId:QuizzerId,bonus:boo
     if(correct || bonus) {
         dispatch(setQuestionState('before'));
         jumpHandler.clear();
+        dispatch(closePopup());
     }
     else dispatch(setQuestionState('bonus'));
 }
 function cancelJump(dispatch:Dispatch) {
     dispatch(setQuestionState('before'));
+    dispatch(closePopup());
     jumpHandler.clear();
 }
 function createTimer(name:string, seconds:number) {
@@ -40,8 +42,8 @@ function clearTimer() {
     timerHandler.clearTimer();
 }
 function setJump(dispatch:Dispatch) {
-    dispatch(setQuestionState('jumpset'));
     jumpHandler.set();
+    dispatch(setQuestionState('jumpset'));
 }
 
 type Action = () => void;

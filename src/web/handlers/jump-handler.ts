@@ -57,6 +57,7 @@ function CreateJumpHandler(dispatch: Dispatch): JumpHandler {
             const alreadyUp = Object.keys(jumped);
             if (alreadyUp.length) {
                 alreadyUp.forEach(id => latched[id] = true);
+                dispatch(jumpCompleted());
             }
         }
     }

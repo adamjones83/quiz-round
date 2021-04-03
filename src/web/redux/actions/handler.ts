@@ -1,8 +1,9 @@
 import { createAction } from '@reduxjs/toolkit';
 import { ActionReducerMapBuilder } from '@reduxjs/toolkit';
 import { Set } from 'immutable';
-import { SeatId } from '../../../types';
+import { PopupType, QuestionState, SeatId } from '../../../types';
 import { RoundState } from '../reducer';
+import { playSound } from '../../components/Sounds';
 
 const JUMP_CHANGED = 'JUMP_CHANGED';
 const JUMP_COMPLETED = 'JUMP_COMPLETED';
@@ -22,8 +23,13 @@ export interface TimerChangedInfo {
 export function addHandlerActions(builder:ActionReducerMapBuilder<RoundState>):void {
     builder
         .addCase(jumpChanged, (state, action) => (state as unknown as RoundState)
-            .set('jumped', Set(action.payload))
-            .update('questionState', value => value === 'jumpset' ? 'answer' : value))
+            .set('jumped', Set(action.payload)))
+        .addCase(jumpCompleted, state => {
+            playSound('right');
+            return (state as unknown as RoundState)
+                .set('questionState', 'answer' as QuestionState)
+                .set('showPopup', 'jump' as PopupType)
+        })
         .addCase(timerChanged, (state, action) => state
             .set('timerName', action.payload.name)
             .set('timeLeft', action.payload.timeLeft));

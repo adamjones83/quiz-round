@@ -9,12 +9,11 @@ import {
     questionStateSelector
 } from "../redux/selectors";
 import { Lineup, QuestionState } from "../../types";
-import { JumpInfoPopup } from "./JumpInfoPopup";
 import { Dispatch } from "redux";
-import { ScoreViewPopup } from "./ScoreViewPopup";
-import { LineupsPopup } from "./LineupsPopup";
 import { getAppUiActions } from "../ui-actions";
-import { TimerPopup } from "./TimerPopup";
+import { Popup } from './Popup';
+import { Sounds } from "./Sounds";
+
 
 const mapStateToProps = (state) => ({
     title: titleSelector(state),
@@ -34,10 +33,8 @@ export const App = connect(mapStateToProps)((props: AppProps) => {
     const uiActions = getAppUiActions(dispatch, questionState);
     return (
         <div>
-            <TimerPopup />
-            <LineupsPopup />
-            <ScoreViewPopup />
-            <JumpInfoPopup />
+            <Popup />
+            <Sounds />
             <div className={"app flex-column"}>
                 <div className={"round-title flex-row"}>
                     <div>{title}</div>
