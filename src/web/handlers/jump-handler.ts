@@ -1,3 +1,4 @@
+/* eslint-disable @typescript-eslint/no-empty-function */
 import { Dispatch } from 'redux';
 import { jumpChanged, jumpCompleted } from '../redux/actions';
 
@@ -15,7 +16,7 @@ export interface JumpHandler {
 
 function CreateJumpHandler(dispatch: Dispatch): JumpHandler {
     let isSet = false;
-    let jumped = {};
+    const jumped = {};
     let latched = {};
 
     /** batch update of seat statuses */
@@ -66,6 +67,7 @@ function CreateJumpHandler(dispatch: Dispatch): JumpHandler {
     return { update, jump, sit, set, clear };
 }
 
+
 // hack - this has no-op actions until initialized with initJumpHandler
 export const jumpHandler: JumpHandler = {
     update: () => { },
@@ -74,6 +76,7 @@ export const jumpHandler: JumpHandler = {
     set: () => { },
     clear: () => { }
 };
-export function initJumpHandler(dispatch: Dispatch) {
+
+export function initJumpHandler(dispatch: Dispatch):void {
     Object.assign(jumpHandler, CreateJumpHandler(dispatch));
 }

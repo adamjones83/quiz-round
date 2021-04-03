@@ -29,11 +29,14 @@ function getQuizMenu(): (MenuItemConstructorOptions | MenuItem) {
         submenu: [
             appSubmenu('Edit Lineups', 'pick-lineups'),
             appSubmenu('Show Scores', 'show-scores'),
+            appSubmenu('Set Question #', 'set-question'),
             { type: 'separator' },
             appSubmenu('Timeout', 'timeout'),
+            appSubmenu('Foul', 'foul'),
+            { type: 'separator' },
             appSubmenu('Challenge', 'challenge'),
             appSubmenu('Appeal', 'appeal'),
-            appSubmenu('Foul', 'foul'),
+            
         ]
     }
 }

@@ -21,6 +21,7 @@ ipcMain.on(DATA_REQUEST, async (evt,name:DataRequestType) => {
             break;
         case 'get-meets':
             evt.reply(responseChannel, await client.getMeets());
+            break;
         default: break;
     }
 });

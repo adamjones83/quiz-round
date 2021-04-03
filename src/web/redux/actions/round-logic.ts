@@ -14,19 +14,15 @@ export const answering = createAction('ANSWERING');
 export const cancelAnswer = createAction('CANCEL_ANSWER');
 export const answered = createAction<AnsweredInfo[]>('ANSWERED');
 export const bonusAnswered = createAction<AnsweredInfo[]>('BONUS_ANSWERED');
-export function addRoundLogicActions(builder:ActionReducerMapBuilder<RoundState>) {
-    // TODO: add state change to set seats of bonus answerers
-    // TODO: add state change for extra bonus scores
-    const bonuses = ['quiz out', 'error out', 'nth team error', 'nth person bonus', 'error after 15'];
-    console.warn('not yet handling bonus scores', bonuses);
-    
+export function addRoundLogicActions(builder:ActionReducerMapBuilder<RoundState>):void {
     builder
         .addCase(answering, state => updateIn(state, ['questionState'], value => value == 'jumpset' ? 'answer' : value))
         .addCase(cancelAnswer, state => updateIn(state, ['questionState'], () => 'before'))
         .addCase(answered, (state,action) => {
-            const question = questionSelector(state);
-            const roundId = roundIdSelector(state);
-            const meetId = meetIdSelector(state);
+            const _state = state as unknown as RoundState;
+            const question = questionSelector(_state);
+            const roundId = roundIdSelector(_state);
+            const meetId = meetIdSelector(_state);
             const doBonus = action.payload.every(a => !a.correct);
             return action.payload.reduce((newState, { teamId, quizzerId, correct }) => {
                 return newState.update('scores', value => (value as List<Score>).push({
@@ -40,9 +36,10 @@ export function addRoundLogicActions(builder:ActionReducerMapBuilder<RoundState>
                 .set('questionState', doBonus ? 'bonus': 'before');
         })
         .addCase(bonusAnswered, (state,action) => {
-            const question = questionSelector(state);
-            const roundId = roundIdSelector(state);
-            const meetId = meetIdSelector(state);
+            const _state = state as unknown as RoundState;
+            const question = questionSelector(_state);
+            const roundId = roundIdSelector(_state);
+            const meetId = meetIdSelector(_state);
             return action.payload.reduce((newState, { teamId, quizzerId, correct }) => {
                 
                 return newState.update('scores', value => (value as List<Score>).push({

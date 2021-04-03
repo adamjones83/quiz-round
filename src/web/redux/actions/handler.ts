@@ -19,7 +19,7 @@ export interface TimerChangedInfo {
     timeLeft:number // seconds
 }
 
-export function addHandlerActions(builder:ActionReducerMapBuilder<RoundState>) {
+export function addHandlerActions(builder:ActionReducerMapBuilder<RoundState>):void {
     builder
         .addCase(jumpChanged, (state, action) => (state as unknown as RoundState)
             .set('jumped', Set(action.payload))

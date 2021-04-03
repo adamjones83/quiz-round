@@ -1,3 +1,4 @@
+/* eslint-disable @typescript-eslint/no-inferrable-types */
 import { Dispatch } from 'redux';
 import { Map, List } from 'immutable';
 import { Score, ScoreType } from '../../types';
@@ -11,13 +12,14 @@ import {
     toggleSeatEnabled
 } from './actions';
 import { nanoid } from 'nanoid';
+import { RoundState } from './reducer';
 
 const roundId = nanoid();
 const meetId = nanoid();
 function createScore(question:number, teamId:string, quizzerId:string, isTeamOnly:boolean, value:number, type:ScoreType) {
     return { id: nanoid(), roundId, meetId, question, teamId, quizzerId, isTeamOnly, value, type, createdOn: new Date().toISOString().substr(0,10) }
 }
-export function addDebugActions(getState,dispatch:Dispatch) {
+export function addDebugActions(getState:()=>RoundState,dispatch:Dispatch):void {
     const ACTIONS = {
         toggleShowLineups: () => dispatch(showPopup('lineups')),
         disableSeat: (team,seat) => dispatch(toggleSeatEnabled(getSeatId(team,seat))),

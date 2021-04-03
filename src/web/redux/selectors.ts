@@ -1,25 +1,26 @@
-import { QuestionState, Team, Quizzer, Lineup, Seat, Score, 
+import { QuestionState, Team, Quizzer, Lineup, Seat, Score,
     TeamId, QuizzerId, SeatId, SeatMap, PopupType } from '../../types';
+import { RoundState } from './reducer'
 import { Map, List, Set } from 'immutable';
 import { createSelector } from '@reduxjs/toolkit';
 
-export const titleSelector = state => state.get('title') as string;
-export const questionSelector = state => state.get('question') as number;
-export const questionStateSelector = state => state.get('questionState') as QuestionState;
-export const teamsSelector = state => state.get('teams') as Map<TeamId, Team>;
-export const quizzersSelector = state => state.get('quizzers') as Map<QuizzerId, Quizzer>;
-export const lineupsSelector = state => state.get('lineups') as List<Lineup>;
-export const defaultLineupsSelector = state => state.get('defaultLineups') as Map<TeamId, Lineup>;
-export const seatsSelector = state => state.get('seats') as Map<SeatId,Seat>;
-export const scoresSelector = state => state.get('scores') as List<Score>;
-export const jumpedSelector = state => state.get('jumped') as Set<SeatId>;
-export const timerNameSelector = state => state.get('timerName') as string;
-export const timeLeftSelector = state => state.get('timeLeft') as number;
-export const seatMapsSelector = state => state.get('bonusSeatMaps') as List<SeatMap>;
-export const showPopupSelector = state => state.get('showPopup') as PopupType;
-export const colorSelector = state => state.get('colors') as List<string>;
-export const roundIdSelector = state => state.get('roundId') as string;
-export const meetIdSelector = state => state.get('meetId') as string;
+export const titleSelector = (state:RoundState):string => state.get('title') as string;
+export const questionSelector = (state:RoundState):number => state.get('question') as number;
+export const questionStateSelector = (state:RoundState):QuestionState => state.get('questionState') as QuestionState;
+export const teamsSelector = (state:RoundState):Map<TeamId,Team> => state.get('teams') as Map<TeamId, Team>;
+export const quizzersSelector = (state:RoundState):Map<QuizzerId,Quizzer> => state.get('quizzers') as Map<QuizzerId, Quizzer>;
+export const lineupsSelector = (state:RoundState):List<Lineup> => state.get('lineups') as List<Lineup>;
+export const defaultLineupsSelector = (state:RoundState):Map<TeamId,Lineup> => state.get('defaultLineups') as Map<TeamId, Lineup>;
+export const seatsSelector = (state:RoundState):Map<SeatId,Seat> => state.get('seats') as Map<SeatId,Seat>;
+export const scoresSelector = (state:RoundState):List<Score> => state.get('scores') as List<Score>;
+export const jumpedSelector = (state:RoundState):Set<SeatId> => state.get('jumped') as Set<SeatId>;
+export const timerNameSelector = (state:RoundState):string => state.get('timerName') as string;
+export const timeLeftSelector = (state:RoundState):number => state.get('timeLeft') as number;
+export const seatMapsSelector = (state:RoundState):List<SeatMap> => state.get('bonusSeatMaps') as List<SeatMap>;
+export const showPopupSelector = (state:RoundState):PopupType => state.get('showPopup') as PopupType;
+export const colorSelector = (state:RoundState):List<string> => state.get('colors') as List<string>;
+export const roundIdSelector = (state:RoundState):string => state.get('roundId') as string;
+export const meetIdSelector = (state:RoundState):string => state.get('meetId') as string;
 
 /* COMPOUND CUSTOM SELECTORS */
 export const teamScoreSelector = createSelector(scoresSelector, teamsSelector,

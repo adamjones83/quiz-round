@@ -8,9 +8,14 @@ import { exec } from 'child_process';
     Seat chains not connected are all set to high bits
 */
 interface SeatStatus { seatId:string, isJumped:boolean }
-export async function SeatHandler(onStatusChange:(seats:SeatStatus[])=>void, onBogo:(loops:number)=>void) {
+export async function SeatHandler(onStatusChange:(seats:SeatStatus[])=>void, onBogo:(loops:number)=>void): Promise<void> {
     const path = await getUsbPath();
     const port = await connect(path);
+    if(!path) {
+        onBogo(-1); 
+        console.log('failed to connect to jump seats');
+        return;
+    }
     const readline = SerialPort.parsers.Readline;
     const parser = port.pipe(new readline({ delimiter: '\r\n' }))
     parser.on('data', (data:Buffer) => {
@@ -50,6 +55,7 @@ function updateStatuses(data:string, onStatusChange:(seats:SeatStatus[])=>void) 
     const ffs = 'FFF'
     const statusNum = parseInt(ffs.substr(0,4-statusUpdate.length) + statusUpdate, 16);
     if(statusNum !== prevStatusNum) {
+        prevStatusNum = statusNum;
         const statuses = getStatuses(statusNum);
         onStatusChange(statuses);
     }

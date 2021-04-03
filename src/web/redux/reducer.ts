@@ -1,7 +1,7 @@
 import { Map, List, Set } from 'immutable';
 import { Action} from 'redux';
 import { ActionReducerMapBuilder, createReducer, nanoid } from '@reduxjs/toolkit';
-import { addAdminActions, addSeatActions, addHandlerActions, getSeatId } from './actions';
+import { addAdminActions, addSeatActions, addHandlerActions } from './actions';
 import { Team, Quizzer, Lineup, Seat, Score, 
     QuizzerId, SeatId, TeamId, SeatMap, QuestionState, PopupType } from '../../types';
 import { addRoundLogicActions } from './actions/round-logic';

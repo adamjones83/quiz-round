@@ -29,7 +29,6 @@ interface AppProps {
     questionState: QuestionState;
     dispatch: Dispatch;
 }
-
 export const App = connect(mapStateToProps)((props: AppProps) => {
     const { title, lineups, question, questionState, dispatch } = props;
     const uiActions = getAppUiActions(dispatch, questionState);

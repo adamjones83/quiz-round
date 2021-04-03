@@ -1,8 +1,7 @@
 import { Dispatch } from "redux";
 import { QuestionState, QuizzerId, ScoreType, TeamId } from "../../types";
-import { nextQuestion, addScore, setQuestionState, AnsweredInfo, closePopup } from '../redux/actions';
+import { nextQuestion, addScore, setQuestionState, closePopup } from '../redux/actions';
 import { jumpHandler, timerHandler } from '../handlers';
-import { questionSelector } from "../redux/selectors";
 
 /* 
     EXAMPLE UI ACTIONS:

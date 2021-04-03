@@ -6,11 +6,16 @@ import { hookupKeyboardJumps } from './keyboard-jumps';
 import { QuizClient } from '../types';
 import { menuEvents } from '../ipc-events';
 import { Dispatch } from 'redux';
-import { MenuEventType } from '../ipc-types';
+import { RoundState } from './redux/reducer';
+import { Store } from 'redux';
 
-export async function initialize(store, client:QuizClient) {
+export async function initialize(store:Store<RoundState>, client:QuizClient):Promise<void> {
     const { getState, dispatch } = store;
-    
+
+    // write some warnings for TODO items that *should* be done because they are structural
+    // but they may not prevent the proper operation of the app - easily missed if not noted
+    DisplayWarnings();
+
     Object.assign(global, { getState, dispatch });
     addDebugActions(getState, dispatch);
 
@@ -37,12 +42,10 @@ export async function initialize(store, client:QuizClient) {
     hookupKeyboardJumps();
 
     // respond to menu-command events
-    handleMenuActions(dispatch);
-
-    // write some warnings for TODO items
-    DisplayWarnings();
+    handleMenuActions(getState,dispatch);
 }
-function handleMenuActions(dispatch:Dispatch) {
+
+function handleMenuActions(getState:()=>RoundState, dispatch:Dispatch) {
     (window['MENU'] as typeof menuEvents).addHandler(type => {
         switch(type) {
             case 'pick-lineups':
@@ -54,12 +57,16 @@ function handleMenuActions(dispatch:Dispatch) {
             case 'timeout':
                 dispatch(showPopup('timer'));
                 timerHandler.setTimer('Timeout', 30);
+                break;
+            case 'set-question':
+                break;
             default:
                 console.warn('Unrecognized menu event - ' + type);
                 break;
         }
     });
 }
+
 function defaultSeatMaps() {
     const seatMaps = [];
     for(let i=0;i<5;i++) {
@@ -72,9 +79,9 @@ function defaultSeatMaps() {
     }
     return seatMaps;
 }
+
 function DisplayWarnings() {
     console.warn('Hardware Rendering is currently disabled from main.ts');
-    console.warn('Need to respond to menu-command events in initialize.ts');
     console.warn('using a non-minified react for development, swap with minified for production');
-    console.warn('Figure out about context isolation that should be enabled in main.ts during browser setup')
+    console.warn('Figure out about context isolation that should be enabled in main.ts during browser setup');
 }

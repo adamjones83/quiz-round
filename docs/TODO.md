@@ -1,35 +1,39 @@
 # TODO
+- menu items: 
+    * timeout, challenge, appeal, foul, show scores, select tournement
+    * set question number
+- Dialogs
+    * team/quizzer select dialog (for fouls, timeouts, ...)
+    * timeout dialog
+    * challenge/rebuttal/appeal dialog
+    * team, quizzer, meet input dialog
+- Windows
+    * audience view - hide actions, optional mirrored team orders
+- Seats
+    * enabling/disabling seats
+    * testing
+    * proper close/dispose of seat?
+    * automatic reload on seat disconnect & reattach
+    * windows computer support
+    * UI click "jumping"
+- Round Flow
+    * state attributes - round start time, round id, meet id
+    * options to start round, restart round
+        - discard, save, or keep scores
+        - set the round start time
+    * set round title
+    * method for selecting quiz meet
+    * quiz outs, error outs, swapping quizzers, enable/disable seats
+    * quiz round ends & saving scores
+- Scores View
+    * manually add scores
+- UI/UX cleanup
+
+## STRETCH
 - debug mode
     * enables console.log debug statements for actions
     * debug UI elements (question state, ...)
     * self dispatching ACTIONS added to the window object
-- menu items: 
-    * timeout, challenge, appeal, foul, show scores, select tournement
-    * set question number
-- timers (answering, timeout, challenge, ...)
-- bonus points: see & implement all point types in types.ts
-- round start time, set round id, quiz/tournement id
-- hook up seat-connector, add seat handler function that takes a set of seat statuses
-- windows seat-connector support
-- ability to disable seats
-- scores view, add/remove
-- audience view - hide action buttons, optional mirrored team orders
-- general UI cleanup
-
-## ROUND FLOW
-- start time set when app is opened
-- menu option to "Start Round"
-    * sets round id, start time
-    * if there's already scores, options to (clear, save, keep for this round)
-- menu option to pick quiz/tournement that updates quiz/tournement id
-- dialog for creating a tournament { name, startdate }, saves to db
-- dialog for setting the round title
-- when scores are saved at the end of a round the round { id, title } is saved with them
-
-## JUMPING
-- jump handler takes mutiple sources
-- seat ids not necessarily tied to round UI
-- Seats, keyboard seats, virtual (via web), UI click
 
 ## QUESTION-STATE UI ACTIONS
 - before: timeout, challenge, rebuttal, jumpset

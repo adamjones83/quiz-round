@@ -1,3 +1,4 @@
+/* eslint-disable @typescript-eslint/no-empty-function */
 import { Dispatch } from 'redux';
 import { timerChanged, timerCompleted } from '../redux/actions';
 
@@ -46,6 +47,6 @@ export const timerHandler:TimerHandler = {
     clearTimer: () => { }
 };
 
-export function initTimerHandler(dispatch:Dispatch) {
+export function initTimerHandler(dispatch:Dispatch):void {
     Object.assign(timerHandler, CreateTimerHandler(dispatch));
 }

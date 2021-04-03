@@ -1,6 +1,6 @@
 import { nanoid } from 'nanoid';
 
-export function CreateEventSource<T>() {
+export function CreateEventSource<T>():{ addHandler:(handler:CustomEventHandler<T>)=>void, raiseEvent:(data:T)=>void } {
     const handlers: Record<string,CustomEventHandler<T>> = {};
     function addHandler(handler:CustomEventHandler<T>) {
         const id = nanoid();
@@ -10,7 +10,7 @@ export function CreateEventSource<T>() {
     function raiseEvent(data:T) {
         for(const handler of Object.values(handlers)) {
             try{ handler(data); }
-            catch { }
+            catch { } // eslint-disable-line no-empty
         }
     }
     return { addHandler, raiseEvent };

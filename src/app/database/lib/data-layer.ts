@@ -1,4 +1,4 @@
-import { Database, Statement } from 'sqlite3';
+import { Database } from 'sqlite3';
 import { Quizzer, Team, Lineup, Meet, Round, Score } from '../../../types'
 
 interface DbLineup {
@@ -23,6 +23,8 @@ function toLineup(dbLineup:DbLineup) {
     } as Lineup;
 }
 
+/** Database data-layer client for Quiz Round related objects */
+// eslint-disable-next-line @typescript-eslint/explicit-module-boundary-types
 export function QuizRoundClient(filepath:string) {
     
     function runMany<T extends { [key:string]:unknown }|unknown[]>(command:string, paramObjItems: T[] ) {

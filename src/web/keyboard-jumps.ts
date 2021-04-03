@@ -1,7 +1,7 @@
 import { jumpHandler } from './handlers/jump-handler';
 import { getSeatId } from './redux/actions/seats';
 
-export function hookupKeyboardJumps() {
+export function hookupKeyboardJumps():void {
     const [team1,team2,team3] = ["qwerty","asdfg","zxcvb"];
     const keysdown = { }
     document.addEventListener('keydown', e => {

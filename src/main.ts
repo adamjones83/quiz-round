@@ -1,10 +1,9 @@
-import { app, BrowserWindow, Menu, MenuItemConstructorOptions, MenuItem, ipcMain } from "electron";
+import { app, BrowserWindow, Menu, MenuItemConstructorOptions, MenuItem } from "electron";
 import * as path from "path";
 import { getMacMenu } from './app/menu/mac-menu';
 import { getWindowsMenu } from './app/menu/windows-menu';
 import { MENU_EVENT, SEAT_STATUS_EVENT } from './ipc-types';
 import { menuEvents, seatEvents } from "./ipc-events";
-import { SeatHandler } from './app/seats/seat-connector';
 import './app/database/database-ipc-handler';
 
 const isMac = process.platform === 'darwin';

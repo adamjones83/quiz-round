@@ -1,11 +1,11 @@
 import { createAction } from '@reduxjs/toolkit';
 import { ActionReducerMapBuilder } from '@reduxjs/toolkit';
-import { QuestionState, Team, Quizzer, Score, TeamId, Lineup, QuizzerId, ScoreType, PopupType } from '../../../types';
+import { QuestionState, Team, Quizzer, Score, TeamId, Lineup, QuizzerId, PopupType } from '../../../types';
 import { Map, List, updateIn } from 'immutable';
 import { RoundState } from '../reducer';
 import { scorePartsSelecor } from '../selectors';
 import { nanoid } from 'nanoid';
-import { getDateStr, getDateTimeStr } from '../../utils';
+import { getDateTimeStr } from '../../utils';
 
 const SET_ROUND_TITLE = 'SET_ROUND_TITLE';
 const SET_QUESTION = 'SET_QUESTION';
@@ -50,7 +50,7 @@ function toScore(info:Partial<Score>, state:RoundState):Score {
         ...info
     };
 }
-export function addAdminActions(builder:ActionReducerMapBuilder<Map<string,unknown>>) {
+export function addAdminActions(builder:ActionReducerMapBuilder<Map<string,unknown>>):void {
     builder
         .addCase(setRoundTitle, (state, action) => state.set('title', action.payload))
         .addCase(setQuestion, (state, action) => state.set('question', action.payload))

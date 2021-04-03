@@ -117,21 +117,21 @@ const teamNames: string[] = [
     "San Antonio First"
 ];
 
-export function generateQuizzers() {
+export function generateQuizzers(): Quizzer[] {
     return quizzerNames.map(name => ({
         id: nanoid(),
         name,
         abbrName: name.split(' ').map((a,i) => i==1 ? a[0] : a).join(' ')
     })) as Quizzer[];
 }
-export function generateTeams() {
+export function generateTeams(): Team[] {
     return teamNames.map(name => ({
         id: nanoid(),
         name,
         abbrName:name
     })) as Team[];
 }
-export function generateDefaultLineups(teams:Team[], quizzers:Quizzer[]) {
+export function generateDefaultLineups(teams:Team[], quizzers:Quizzer[]): Lineup[] {
     const shuffled = shuffle(quizzers);
     return teams.map(team => {
         const quizzerIds = shuffled.splice(0,5).map(a => a.id);

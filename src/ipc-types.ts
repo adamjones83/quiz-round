@@ -1,5 +1,5 @@
 export const MENU_EVENT = 'menu-event';
-export type MenuEventType = 'pick-lineups' | 'timeout' | 'foul' | 'challenge' | 'appeal' | 'show-scores';
+export type MenuEventType = 'pick-lineups' | 'timeout' | 'foul' | 'challenge' | 'appeal' | 'show-scores' | 'set-question';
 
 export const SEAT_STATUS_EVENT = 'seat-status-update';
 export interface SeatStatus { seatId: string, isJumped: boolean }

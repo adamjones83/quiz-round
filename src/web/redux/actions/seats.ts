@@ -1,12 +1,10 @@
-import { createAction } from '@reduxjs/toolkit';
-import { ActionReducerMapBuilder } from '@reduxjs/toolkit';
 import { Lineup, QuizzerId, Seat, SeatId, SeatMap } from '../../../types';
-import { List, Map, Set, updateIn } from 'immutable';
-import { swapLineup } from '../../utils';
 import { RoundState } from '../reducer';
-import { lineupsSelector } from '../selectors';
+import { swapLineup } from '../../utils';
+import { ActionReducerMapBuilder } from '@reduxjs/toolkit';
+import { createAction } from '@reduxjs/toolkit';
+import { List, Set, updateIn } from 'immutable';
 
-const TOGGLE_LINEUP_SELECTION_POPUP = 'TOGGLE_LINEUP_SELECTION_POPUP';
 const TOGGLE_SEAT_ENABLED = 'TOGGLE_SEAT_ENABLED'
 const UPDATE_LINEUPS = 'UPDATE_LINEUPS';
 const SET_LINEUP = 'SET_LINEUP';
@@ -27,7 +25,7 @@ export const setLineupCoCaptain = createAction<{ lineupNum:number, coCaptainId:Q
 export const swapQuizzers = createAction<{ lineupNum:number, seatA:number, seatB:number }>(SWAP_QUIZZERS);
 export const setBonusSeatmaps = createAction<SeatMap[]>(SET_BONUS_SEATMAPS);
 
-export function addSeatActions(builder:ActionReducerMapBuilder<RoundState>) {
+export function addSeatActions(builder:ActionReducerMapBuilder<RoundState>):void {
     builder
         .addCase(toggleSeatEnabled, (state, { payload })=> updateIn(state, ['seats',payload], (seat:Seat) => ({
             ...seat,
@@ -64,12 +62,12 @@ export function addSeatActions(builder:ActionReducerMapBuilder<RoundState>) {
         .addCase(setBonusSeatmaps, (state, action) => updateIn(state, ['bonusSeatMaps'], () => List(action.payload)))
 }
 /** returns the seat id for a given team number & seat number */
-export function getSeatId(teamNum:number, seatNum:number) {
+export function getSeatId(teamNum:number, seatNum:number):string {
     return `Team ${teamNum} - Seat ${seatNum}`;
 }
 
 /** returns the seats that are mapped to get a bonus from a given set of seats */
-export function getBonusSeatIds(seatMaps:List<SeatMap>, seatIds:SeatId[]) {
+export function getBonusSeatIds(seatMaps:List<SeatMap>, seatIds:SeatId[]):Set<string> {
     return seatMaps.filter(a => seatIds.includes(a.from)).map(a => a.to).toSet();
 }
 
