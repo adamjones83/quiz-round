@@ -14,6 +14,7 @@ export const answering = createAction('ANSWERING');
 export const cancelAnswer = createAction('CANCEL_ANSWER');
 export const answered = createAction<AnsweredInfo[]>('ANSWERED');
 export const bonusAnswered = createAction<AnsweredInfo[]>('BONUS_ANSWERED');
+
 export function addRoundLogicActions(builder:ActionReducerMapBuilder<RoundState>):void {
     builder
         .addCase(answering, state => updateIn(state, ['questionState'], value => value == 'jumpset' ? 'answer' : value))
@@ -51,5 +52,5 @@ export function addRoundLogicActions(builder:ActionReducerMapBuilder<RoundState>
             }, state as unknown as RoundState)
                 .set('question', question + 1)
                 .set('questionState', 'before');
-        })
+        });
 }

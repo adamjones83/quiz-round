@@ -62,7 +62,7 @@ export const bonusInfoSelector = createSelector(jumpedSelector, seatsSelector, q
             teamName: teams.get(seat.teamId)?.abbrName,
             color: colors.get(lineups.findIndex(a => a?.teamId === seat.teamId))
     })));
-export const scorePartsSelecor = createSelector(roundIdSelector, meetIdSelector, questionSelector,
+export const scorePartsSelector = createSelector(roundIdSelector, meetIdSelector, questionSelector,
     (roundId, meetId, question) => ({roundId, meetId, question}));
     
 function getTeamScore(scores:Score[], teamId:string) {

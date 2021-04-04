@@ -60,6 +60,9 @@ function handleMenuActions(dispatch:Dispatch) {
                 break;
             case 'set-question':
                 break;
+            case 'foul':
+                dispatch(showPopup('foul'));
+                break;
             default:
                 console.warn('Unrecognized menu event - ' + type);
                 break;

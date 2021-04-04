@@ -7,6 +7,7 @@ import { LineupsPopup } from "./popups/LineupsPopup";
 import { ScoreViewPopup } from './popups/ScoreViewPopup'
 import { JumpInfoPopup } from './popups/JumpInfoPopup';
 import { TimerPopup } from './popups/TimerPopup';
+import { FoulPopup } from "./popups/FoulPopup";
 
 interface PopupProps {
     visible: boolean,
@@ -18,7 +19,8 @@ const popupChildrenByType:Record<PopupType, JSX.Element> = {
     "lineups": <LineupsPopup />,
     "scores": <ScoreViewPopup />,
     "timer": <TimerPopup />,
-    "jump": <JumpInfoPopup />
+    "jump": <JumpInfoPopup />,
+    "foul": <FoulPopup />
 };
 
 function mapStateToProps(state:RoundState) {

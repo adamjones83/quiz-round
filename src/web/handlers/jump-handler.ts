@@ -17,6 +17,8 @@ export interface JumpHandler {
 }
 
 function CreateJumpHandler(dispatch: Dispatch): JumpHandler {
+    // wrapping dispatches in a thread escaping function so it doesn't cause problems
+    // when one of the exposed functions is called from an action dispatch handler
     const innerDispatch = (action:AnyAction) => setTimeout(() => dispatch(action),0);
     let isSet = false;
     const disabled = {};

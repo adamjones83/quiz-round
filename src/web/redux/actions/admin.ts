@@ -3,7 +3,7 @@ import { ActionReducerMapBuilder } from '@reduxjs/toolkit';
 import { QuestionState, Team, Quizzer, Score, TeamId, Lineup, QuizzerId, PopupType } from '../../../types';
 import { Map, List, updateIn } from 'immutable';
 import { RoundState } from '../reducer';
-import { scorePartsSelecor } from '../selectors';
+import { scorePartsSelector } from '../selectors';
 import { nanoid } from 'nanoid';
 import { getDateTimeStr } from '../../utils';
 
@@ -30,6 +30,7 @@ export const updateQuizzers = createAction<Record<QuizzerId,Quizzer>>(UPDATE_QUI
 export const updateDefaultLineups = createAction<Record<TeamId,Lineup>>(UPDATE_DEFAULT_LINEUPS);
 export const addScore = createAction<Partial<Score>>(ADD_SCORE);
 export const removeScore = createAction<number>(REMOVE_SCORE);
+export const addFoul = createAction<{teamId:string,quizzerId?:string}>('ADD_FOUL');
 export const changeTeamName = createAction<{ id:string, name:string }>(CHANGE_TEAM_NAME);
 export const changeQuizzerName = createAction<{ id:string, name:string }>(CHANGE_QUIZZER_NAME);
 export const nextQuestion = createAction(NEXT_QUESTION);
@@ -38,7 +39,7 @@ export const showPopup = createAction<PopupType>(SHOW_POPUP);
 export const closePopup = createAction(CLOSE_POPUP);
 
 function toScore(info:Partial<Score>, state:RoundState):Score {
-    const { roundId, meetId, question } = scorePartsSelecor(state);
+    const { roundId, meetId, question } = scorePartsSelector(state);
     return {
         id: nanoid(),
         roundId, meetId, question,
@@ -61,6 +62,14 @@ export function addAdminActions(builder:ActionReducerMapBuilder<Map<string,unkno
         .addCase(addScore, (state, action) => updateIn(state, ['scores'], (list:List<Score>) => 
             list.push(toScore(action.payload,state as unknown as RoundState))))
         .addCase(removeScore, (state, action) => updateIn(state, ['scores'], (list:List<Score>) => list.remove(action.payload)))
+        .addCase(addFoul, (state, action) => updateIn(state, ['scores'], (list:List<Score>) => {
+            const _state = state as unknown as RoundState;
+            const { teamId, quizzerId } = action.payload;
+            const withFoul = list.push(toScore({ teamId, quizzerId, isTeamOnly:true, 
+                value: 0, type: 'foul' }, _state));
+            const isOdd = withFoul.count(a => a.teamId === teamId && a.type === 'foul') % 2;
+            return isOdd ? withFoul : withFoul.push(toScore({ teamId, isTeamOnly:true, value:-10, type:'2nd foul' }, _state));
+        }))
         .addCase(changeTeamName, (state, {payload: { id, name }}) => 
             updateIn(state, ['teams'], (map:Map<string,Team>) => map.update(id, team => ({ ...team, name }))))
         .addCase(changeQuizzerName, (state, {payload: { id, name }}) => 
