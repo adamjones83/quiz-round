@@ -4,6 +4,7 @@ import { swapLineup } from '../../utils';
 import { ActionReducerMapBuilder } from '@reduxjs/toolkit';
 import { createAction } from '@reduxjs/toolkit';
 import { List, Set, updateIn } from 'immutable';
+import { jumpHandler } from '../../handlers';
 
 const TOGGLE_SEAT_ENABLED = 'TOGGLE_SEAT_ENABLED'
 const UPDATE_LINEUPS = 'UPDATE_LINEUPS';
@@ -27,10 +28,13 @@ export const setBonusSeatmaps = createAction<SeatMap[]>(SET_BONUS_SEATMAPS);
 
 export function addSeatActions(builder:ActionReducerMapBuilder<RoundState>):void {
     builder
-        .addCase(toggleSeatEnabled, (state, { payload })=> updateIn(state, ['seats',payload], (seat:Seat) => ({
-            ...seat,
-            isEnabled: !seat.isEnabled
-        } as Seat)))
+        .addCase(toggleSeatEnabled, (state, { payload })=> {
+            const _state = state as unknown as RoundState;
+            const seat = _state.getIn(['seats', payload], { id:payload, isEnabled:true }) as Seat;
+            if(seat.isEnabled) jumpHandler.disable(payload);
+            else jumpHandler.enable(payload);
+            return _state.setIn(['seats',payload], {...seat, isEnabled: !seat.isEnabled});
+        })
         .addCase(updateLineups, (state, action) => { 
             const newState = (state as unknown as RoundState).set('lineups', List(action.payload));
             return updateSeatsFromLineups(newState);
@@ -82,6 +86,11 @@ function updateSeatsFromLineups(state:RoundState) {
             const teamId = lineup?.teamId;
             const quizzerId = lineup?.quizzerIds[seatNum];
             const seatId = getSeatId(teamNum, seatNum);
+            
+            // enable/disable seats
+            if(quizzerId) jumpHandler.enable(seatId); 
+            else jumpHandler.disable(seatId);
+
             return newState.updateIn(['seats',seatId], () => ({
                 id:seatId, teamId, quizzerId, isEnabled: !!quizzerId
             } as Seat));

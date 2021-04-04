@@ -1,5 +1,5 @@
 /* eslint-disable @typescript-eslint/no-empty-function */
-import { Dispatch } from 'redux';
+import { AnyAction, Dispatch } from 'redux';
 import { jumpChanged, jumpCompleted } from '../redux/actions';
 
 interface SeatStatus {
@@ -7,6 +7,8 @@ interface SeatStatus {
     jumped:boolean
 }
 export interface JumpHandler {
+    disable: (seatId:string) => void,
+    enable: (seatId:string) => void,
     update: (statuses:SeatStatus[]) => void,
     jump: (id: string) => void,
     sit: (id: string) => void,
@@ -15,39 +17,54 @@ export interface JumpHandler {
 }
 
 function CreateJumpHandler(dispatch: Dispatch): JumpHandler {
+    const innerDispatch = (action:AnyAction) => setTimeout(() => dispatch(action),0);
     let isSet = false;
+    const disabled = {};
     const jumped = {};
     let latched = {};
 
+    const enable = (seatId:string) => {
+        delete disabled[seatId];
+    }
+    const disable = (seatId:string) => {
+        disabled[seatId] = true;
+        delete jumped[seatId];
+        if(!isSet) {
+            innerDispatch(jumpChanged(Object.keys(jumped)));
+        }
+    }
     /** batch update of seat statuses */
     const update = (statuses:SeatStatus[]) => {
         statuses.forEach(({id,jumped}) => {
-            if(jumped) jumped[id] = true;
-            else delete jumped[id];
+            if(!disabled[id]) {
+                if(jumped) jumped[id] = true;
+                else delete jumped[id];
+            }
         });
         const jumpedIds = Object.keys(jumped);
         if(!isSet) {
-            dispatch(jumpChanged(jumpedIds));
+            innerDispatch(jumpChanged(jumpedIds));
         } else if(jumpedIds.length && !Object.keys(latched).length) {
             jumpedIds.forEach(id => latched[id] = true);
-            dispatch(jumpChanged(jumpedIds));
-            dispatch(jumpCompleted());
+            innerDispatch(jumpChanged(jumpedIds));
+            innerDispatch(jumpCompleted());
         }
     }
     const jump = id => {
+        if(disabled[id]) return;
         jumped[id] = true;
         if (!isSet) {
-            dispatch(jumpChanged(Object.keys(jumped)));
+            innerDispatch(jumpChanged(Object.keys(jumped)));
         } else if (!Object.keys(latched).length) { // set but no seat is "latched"
             latched[id] = true;
-            dispatch(jumpChanged([id]));
-            dispatch(jumpCompleted());
+            innerDispatch(jumpChanged([id]));
+            innerDispatch(jumpCompleted());
         }
     }
     const sit = id => {
         delete jumped[id];
         if (!isSet) {
-            dispatch(jumpChanged(Object.keys(jumped)));
+            innerDispatch(jumpChanged(Object.keys(jumped)));
         }
     }
     const set = () => {
@@ -57,20 +74,22 @@ function CreateJumpHandler(dispatch: Dispatch): JumpHandler {
             const alreadyUp = Object.keys(jumped);
             if (alreadyUp.length) {
                 alreadyUp.forEach(id => latched[id] = true);
-                dispatch(jumpCompleted());
+                innerDispatch(jumpCompleted());
             }
         }
     }
     const clear = () => {
         isSet = false;
-        dispatch(jumpChanged(Object.keys(jumped)));
+        innerDispatch(jumpChanged(Object.keys(jumped)));
     }
-    return { update, jump, sit, set, clear };
+    return { enable, disable, update, jump, sit, set, clear };
 }
 
 
 // hack - this has no-op actions until initialized with initJumpHandler
 export const jumpHandler: JumpHandler = {
+    enable: () => { },
+    disable: () => { },
     update: () => { },
     jump: () => { },
     sit: () => { },

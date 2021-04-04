@@ -42,10 +42,10 @@ export async function initialize(store:Store<RoundState>, client:QuizClient):Pro
     hookupKeyboardJumps();
 
     // respond to menu-command events
-    handleMenuActions(getState,dispatch);
+    handleMenuActions(dispatch);
 }
 
-function handleMenuActions(getState:()=>RoundState, dispatch:Dispatch) {
+function handleMenuActions(dispatch:Dispatch) {
     (window['MENU'] as typeof menuEvents).addHandler(type => {
         switch(type) {
             case 'pick-lineups':
