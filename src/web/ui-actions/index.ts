@@ -1,6 +1,6 @@
 import { Dispatch } from "redux";
-import { QuestionState, QuizzerId, ScoreType, TeamId } from "../../types";
-import { nextQuestion, addScore, setQuestionState, closePopup } from '../redux/actions';
+import { QuestionState, QuizzerId, TeamId } from "../../types";
+import { nextQuestion, addAnswered, setQuestionState, closePopup } from '../redux/actions';
 import { jumpHandler, timerHandler } from '../handlers';
 
 /* 
@@ -13,17 +13,9 @@ import { jumpHandler, timerHandler } from '../handlers';
 
 function answered(dispatch:Dispatch, teamId:TeamId,quizzerId:QuizzerId,bonus:boolean,correct:boolean) {
     // add score, set question, set question state, clear jump handler
-    const scoreType:ScoreType = correct ? (bonus ? 'bonus-correct':'correct') :
-      (bonus ? 'bonus-error' : 'error');
-    
-    dispatch(addScore({
-        isTeamOnly:bonus,
-        teamId, quizzerId, 
-        value: !correct ? 0 : bonus ? 10 : 20, 
-        type: scoreType
-    }));
-    if(correct || bonus) dispatch(nextQuestion());
+    dispatch(addAnswered(teamId,quizzerId,correct,bonus));
     if(correct || bonus) {
+        dispatch(nextQuestion());
         dispatch(setQuestionState('before'));
         jumpHandler.clear();
         dispatch(closePopup());
@@ -35,8 +27,8 @@ function cancelJump(dispatch:Dispatch) {
     dispatch(closePopup());
     jumpHandler.clear();
 }
-function createTimer(name:string, seconds:number) {
-    timerHandler.setTimer(name, seconds);
+function createTimer(seconds:number) {
+    timerHandler.setTimer(seconds);
 }
 function clearTimer() {
     timerHandler.clearTimer();
@@ -63,9 +55,8 @@ export function getAppUiActions(dispatch:Dispatch, questionState:QuestionState):
     }
 }
 export function getSingleAnswerUiActions(dispatch:Dispatch, teamId:string, quizzerId:string, bonus:boolean, timerSet:boolean): UiAction[] {
-    const timerName = bonus ? 'Bonus': 'Jump'
     return [
-        !timerSet ? { name: 'Set', action: ()=>createTimer(timerName, 30) } :
+        !timerSet ? { name: 'Set', action: ()=>createTimer(30) } :
             { name: 'Clear', action: clearTimer },
         { name: 'Correct', action: ()=>answered(dispatch,teamId,quizzerId,bonus,true) },
         { name: 'Error', action: ()=>answered(dispatch,teamId,quizzerId,bonus,false) },
@@ -74,7 +65,7 @@ export function getSingleAnswerUiActions(dispatch:Dispatch, teamId:string, quizz
 }
 export function getTimerPopupUiActions(dispatch:Dispatch): UiAction[] {
     return [
-        { name: 'Reset', action: ()=> createTimer('timer', 30) },
+        { name: 'Reset', action: ()=> createTimer(30) },
         { name: 'Close', action: ()=>{ clearTimer(); dispatch(closePopup()); } }
     ];
 }

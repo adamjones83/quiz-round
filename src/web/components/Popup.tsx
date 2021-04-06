@@ -6,8 +6,9 @@ import { RoundState } from "../redux/reducer";
 import { LineupsPopup } from "./popups/LineupsPopup";
 import { ScoreViewPopup } from './popups/ScoreViewPopup'
 import { JumpInfoPopup } from './popups/JumpInfoPopup';
-import { TimerPopup } from './popups/TimerPopup';
+import { TimeoutPopup } from './popups/TimeoutPopup';
 import { FoulPopup } from "./popups/FoulPopup";
+import { SetQuestionPopup } from "./popups/SetQuestionPopup";
 
 interface PopupProps {
     visible: boolean,
@@ -18,9 +19,12 @@ const popupChildrenByType:Record<PopupType, JSX.Element> = {
     "none": <div />,
     "lineups": <LineupsPopup />,
     "scores": <ScoreViewPopup />,
-    "timer": <TimerPopup />,
+    "timeout": <TimeoutPopup />,
     "jump": <JumpInfoPopup />,
-    "foul": <FoulPopup />
+    "foul": <FoulPopup />,
+    "set-question": <SetQuestionPopup />,
+    "challenge": <div />,
+    "appeal": <div />
 };
 
 function mapStateToProps(state:RoundState) {

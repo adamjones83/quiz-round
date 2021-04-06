@@ -8,7 +8,10 @@
     * challenge/rebuttal/appeal dialog
     * team, quizzer, meet input dialog
 - Windows
-    * audience view - hide actions, optional mirrored team orders
+    * audience view 
+        - hide actions
+        - optional mirrored team order
+        - toast (3 second) for fouls (and appeals if they don't use a timer)
 - Seats
     * enabling/disabling seats
     * testing
@@ -28,6 +31,11 @@
 - Scores View
     * manually add scores
 - UI/UX cleanup
+    * consistent team ordering in dropdowns (by lineup when applicable, or alphabetical)
+    * standardize 'Ok' text for buttons
+    * standardize 'Ok', 'Cancel' order
+    * prime button coloration
+- keyboard shortcuts
 
 ## STRETCH
 - debug mode

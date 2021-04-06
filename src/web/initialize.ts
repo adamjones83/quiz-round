@@ -3,11 +3,12 @@ import { initJumpHandler, initTimerHandler, timerHandler } from './handlers';
 import { addDebugActions } from './redux/debug-actions';
 import { shuffle, toLookup } from './utils';
 import { hookupKeyboardJumps } from './keyboard-jumps';
-import { QuizClient } from '../types';
+import { PopupType, QuizClient } from '../types';
 import { menuEvents } from '../ipc-events';
 import { Dispatch } from 'redux';
 import { RoundState } from './redux/reducer';
 import { Store } from 'redux';
+import { MenuEventType } from '../ipc-types';
 
 export async function initialize(store:Store<RoundState>, client:QuizClient):Promise<void> {
     const { getState, dispatch } = store;
@@ -45,28 +46,24 @@ export async function initialize(store:Store<RoundState>, client:QuizClient):Pro
     handleMenuActions(dispatch);
 }
 
+const menuPopups:Partial<Record<MenuEventType,PopupType>> = {
+    ['pick-lineups']: 'lineups',
+    ['show-scores']: 'scores',
+    ['set-question']: 'set-question',
+    foul: 'foul',
+    timeout: 'timeout',
+    challenge: 'challenge',
+    appeal: 'appeal'  
+};
+
 function handleMenuActions(dispatch:Dispatch) {
     (window['MENU'] as typeof menuEvents).addHandler(type => {
-        switch(type) {
-            case 'pick-lineups':
-                dispatch(showPopup('lineups'));
-                break;
-            case 'show-scores':
-                dispatch(showPopup('scores'));
-                break;
-            case 'timeout':
-                dispatch(showPopup('timer'));
-                timerHandler.setTimer('Timeout', 30);
-                break;
-            case 'set-question':
-                break;
-            case 'foul':
-                dispatch(showPopup('foul'));
-                break;
-            default:
-                console.warn('Unrecognized menu event - ' + type);
-                break;
+        const popup = menuPopups[type];
+        if(popup) {
+            dispatch(showPopup(popup));
+            return;
         }
+        console.warn('Unrecognized menu event - ' + type);
     });
 }
 

@@ -1,10 +1,10 @@
 import { Map, List, Set } from 'immutable';
 import { Action} from 'redux';
 import { ActionReducerMapBuilder, createReducer, nanoid } from '@reduxjs/toolkit';
-import { addAdminActions, addSeatActions, addHandlerActions } from './actions';
+import { addAdminActions, addSeatActions, addHandlerActions, 
+    addRoundLogicActions, addScoresActions  } from './actions';
 import { Team, Quizzer, Lineup, Seat, Score, 
     QuizzerId, SeatId, TeamId, SeatMap, QuestionState, PopupType } from '../../types';
-import { addRoundLogicActions } from './actions/round-logic';
 import { TeamColor } from '../colors';
 
 export const defaultState = Map({
@@ -34,6 +34,7 @@ export const reducer = createReducer(defaultState, (builder:ActionReducerMapBuil
     addHandlerActions(builder);
     addSeatActions(builder);
     addRoundLogicActions(builder);
+    addScoresActions(builder);
     builder.addDefaultCase(defaultWarnHandler);
 });
 

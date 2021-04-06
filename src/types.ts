@@ -5,10 +5,10 @@ export type QuestionState = 'before'|'jumpset'|'answer'|'bonus';
 export type ScoreType = '-unknown-'|'foul'|'2nd foul'|'timeout'|
     'overruled-challenge'|'upheld-challenge'|'overruled-appeal'|'upheld-appeal'|
     'correct'|'error'|'bonus-correct'|'bonus-error'|
-    'correct-quizout'|'error-errorout'|
-    '5+ error'|'error after 15'|
+    'correct-quizout'|'error-out'|
+    '5+ team error'|'error after 15'|
     '3rd person bonus'|'4th person bonus'|'5th person bonus';
-export type PopupType = 'none'|'jump'|'scores'|'lineups'|'timer'|'foul';
+export type PopupType = 'none'|'jump'|'set-question'|'scores'|'lineups'|'timeout'|'foul'|'challenge'|'appeal';
 export interface Round {
     id: string,
     meetId: string,

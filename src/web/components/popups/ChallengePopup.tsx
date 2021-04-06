@@ -5,11 +5,11 @@ import { Lineup, Quizzer, QuizzerId, Team, TeamId } from '../../../types';
 import { connect } from 'react-redux';
 import { Dispatch } from 'redux';
 import { Map, List } from 'immutable';
-import { addFoul, closePopup } from '../../redux/actions';
+import { addChallenge, closePopup } from '../../redux/actions';
 import { TeamSelect } from '../fragments/TeamSelectFragment';
 import { QuizzerSelect } from '../fragments/QuizzerSelectFragment';
 
-interface FoulPopupProps {
+interface ChallengePopupProps {
     teams: Map<TeamId,Team>,
     quizzers: Map<QuizzerId, Quizzer>,
     lineups: List<Lineup>,
@@ -23,7 +23,7 @@ const mapStateToProps = (state: RoundState) => ({
 
 
 /** A popup for recording a foul on a given team/player */
-export const FoulPopup = connect(mapStateToProps)((props:FoulPopupProps) => {
+export const ChallengePopup = connect(mapStateToProps)((props:ChallengePopupProps) => {
     const { teams, quizzers, lineups, dispatch } = props;
     const [teamId, setTeamId] = React.useState(lineups.get(0).teamId);
     const [quizzerId, setQuizzerId] = React.useState('');
@@ -32,10 +32,11 @@ export const FoulPopup = connect(mapStateToProps)((props:FoulPopupProps) => {
         .filter(q => lineups.find(a => a.teamId === teamId)?.quizzerIds.includes(q.id));
 
     return <div>
-        <div>Add Foul</div>
+        <div>Challenge</div>
         <TeamSelect { ...{teamId,teams:filteredTeams,setTeamId} } />
         <QuizzerSelect { ...{quizzerId,quizzers:filteredQuizzers,setQuizzerId,showNone:true} } />
-        <button onClick={ () => { dispatch(addFoul(teamId,quizzerId)); dispatch(closePopup()); } }>Ok</button>
+        <button onClick={ () => { dispatch(addChallenge(teamId,quizzerId,true)); dispatch(closePopup()); } }>Accept</button>
+        <button onClick={ () => { dispatch(addChallenge(teamId,quizzerId,true)); dispatch(closePopup()); } }>Reject</button>
         <button onClick={ () => dispatch(closePopup()) }>Cancel</button>
     </div>
 });
