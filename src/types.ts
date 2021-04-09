@@ -8,7 +8,11 @@ export type ScoreType = '-unknown-'|'foul'|'2nd foul'|'timeout'|
     'correct-quizout'|'error-out'|
     '5+ team error'|'error after 15'|
     '3rd person bonus'|'4th person bonus'|'5th person bonus';
-export type PopupType = 'none'|'jump'|'set-question'|'scores'|'lineups'|'timeout'|'foul'|'challenge'|'appeal';
+export type PopupType = 'none'|'restart-round'|'set-round-title'|'edit-quizzers'|
+'jump'|'set-question'|'scores'|'lineups'|'timeout'|'foul'|'challenge'|'appeal';
+export type BonusHandlingType = 'auto' | 'manual';
+export type TimerType = 'timeout-timer'|'jump-timer'|'answer-timer';
+export type SoundType = 'jump'|'right'|'wrong'|'timeout-timer'|'jump-timer'|'answer-timer'|'round-complete';
 export interface Round {
     id: string,
     meetId: string,

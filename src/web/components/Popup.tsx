@@ -3,12 +3,19 @@ import { connect } from 'react-redux';
 import { PopupType } from "../../types";
 import { showPopupSelector } from '../redux/selectors';
 import { RoundState } from "../redux/reducer";
-import { LineupsPopup } from "./popups/LineupsPopup";
-import { ScoreViewPopup } from './popups/ScoreViewPopup'
-import { JumpInfoPopup } from './popups/JumpInfoPopup';
-import { TimeoutPopup } from './popups/TimeoutPopup';
-import { FoulPopup } from "./popups/FoulPopup";
-import { SetQuestionPopup } from "./popups/SetQuestionPopup";
+import { 
+    AppealPopup,
+    ChallengePopup,
+    FoulPopup,
+    JumpInfoPopup,
+    LineupsPopup,
+    RestartRoundPopup,
+    ScoreViewPopup,
+    SetQuestionPopup,
+    SetRoundTitlePopup,
+    TimeoutPopup
+} from './popups';
+import { EditQuizzersPopup } from "./popups/EditQuizzersPopup";
 
 interface PopupProps {
     visible: boolean,
@@ -17,14 +24,17 @@ interface PopupProps {
 
 const popupChildrenByType:Record<PopupType, JSX.Element> = {
     "none": <div />,
+    "restart-round": <RestartRoundPopup />,
+    "set-round-title": <SetRoundTitlePopup />,
     "lineups": <LineupsPopup />,
     "scores": <ScoreViewPopup />,
     "timeout": <TimeoutPopup />,
     "jump": <JumpInfoPopup />,
     "foul": <FoulPopup />,
     "set-question": <SetQuestionPopup />,
-    "challenge": <div />,
-    "appeal": <div />
+    "challenge": <ChallengePopup />,
+    "appeal": <AppealPopup />,
+    "edit-quizzers": <EditQuizzersPopup />
 };
 
 function mapStateToProps(state:RoundState) {

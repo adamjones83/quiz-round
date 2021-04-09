@@ -1,7 +1,8 @@
 import { createAction } from '@reduxjs/toolkit';
 import { ActionReducerMapBuilder } from '@reduxjs/toolkit';
-import { QuestionState, Team, Quizzer, TeamId, Lineup, QuizzerId, PopupType } from '../../../types';
+import { QuestionState, Team, Quizzer, TeamId, Lineup, QuizzerId, PopupType, Meet } from '../../../types';
 import { Map, updateIn } from 'immutable';
+import { RoundState } from '../reducer';
 
 const SET_ROUND_TITLE = 'SET_ROUND_TITLE';
 const SET_QUESTION = 'SET_QUESTION';
@@ -19,6 +20,7 @@ const CLOSE_POPUP = 'CLOSE_POPUP';
 export const setRoundTitle = createAction<string>(SET_ROUND_TITLE);
 export const setQuestion = createAction<number>(SET_QUESTION);
 export const setQuestionState = createAction<QuestionState>(SET_QUESTION_STATE);
+export const updateMeets = createAction<Record<string,Meet>>('UPDATE_MEETS');
 export const updateTeams = createAction<Record<TeamId,Team>>(UPDATE_TEAMS);
 export const updateQuizzers = createAction<Record<QuizzerId,Quizzer>>(UPDATE_QUIZZERS);
 export const updateDefaultLineups = createAction<Record<TeamId,Lineup>>(UPDATE_DEFAULT_LINEUPS);
@@ -28,12 +30,14 @@ export const nextQuestion = createAction(NEXT_QUESTION);
 export const prevQuestion = createAction(PREV_QUESTION);
 export const showPopup = createAction<PopupType>(SHOW_POPUP);
 export const closePopup = createAction(CLOSE_POPUP);
+export const stateUpdate = createAction<(state:RoundState)=>RoundState>('STATE_UPDATE');
 
 export function addAdminActions(builder:ActionReducerMapBuilder<Map<string,unknown>>):void {
     builder
         .addCase(setRoundTitle, (state, action) => state.set('title', action.payload))
         .addCase(setQuestion, (state, action) => state.set('question', action.payload))
         .addCase(setQuestionState, (state, action) => state.set('questionState', action.payload))
+        .addCase(updateMeets, (state, action) => state.set('meets', Map(action.payload)))
         .addCase(updateTeams, (state, action) => state.set('teams', Map(action.payload)))
         .addCase(updateQuizzers, (state, action) => state.set('quizzers', Map(action.payload)))
         .addCase(updateDefaultLineups, (state, action) => state.set('defaultLineups', Map(action.payload)))
@@ -45,4 +49,5 @@ export function addAdminActions(builder:ActionReducerMapBuilder<Map<string,unkno
         .addCase(prevQuestion, state => state.set('question', Math.max(1, state.get('question') as number - 1)))
         .addCase(showPopup, (state,action) => updateIn(state, ['showPopup'], value => value !== 'none' ? value : action.payload))
         .addCase(closePopup, state => state.set('showPopup', 'none'))
+        .addCase(stateUpdate, (state, {payload}) => payload(state as unknown as RoundState));
 }

@@ -1,5 +1,4 @@
-import { AnyAction, createAction } from '@reduxjs/toolkit';
-import { ActionReducerMapBuilder } from '@reduxjs/toolkit';
+import { AnyAction, createAction, ActionReducerMapBuilder } from '@reduxjs/toolkit';
 import { Map, List, updateIn } from 'immutable';
 import { nanoid } from 'nanoid';
 import { QuizzerId, Score, ScoreType, TeamId } from '../../../types';

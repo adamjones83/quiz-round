@@ -135,3 +135,31 @@ html, body, #react-mount, #react-mount>div {
 .seat.disabled {
     background-color: #0005;
 }
+
+table.edit-quizzers {
+    width: 600px;
+    border-spacing: 0;
+}
+.edit-quizzers tbody,
+.edit-quizzers thead tr { display: block; }
+.edit-quizzers tbody {
+    height: 100px;
+    overflow-y: auto;
+    overflow-x: hidden;
+}
+.edit-quizzers tbody td, .edit-quizzers thead th {
+    width: 145px;
+}
+.edit-quizzers thead th:last-child {
+    width: 160px;
+}
+.edit-quizzers tr:nth-child(2) {
+    background-color: #aaa;
+}
+.edit-quizzers a {
+    font-style: italic;
+    color: coral;
+}
+.edit-quizzers a:hover {
+    color: #898
+}

@@ -1,6 +1,5 @@
 import * as React from 'react';
 import { addTimeout, closePopup } from '../../redux/actions';
-import { getTimerPopupUiActions } from '../../ui-actions';
 import { Lineup, Team, TeamId } from '../../../types';
 import { lineupsSelector, teamsSelector, timeLeftSelector } from '../../redux/selectors';
 import { RoundState } from '../../redux/reducer';
@@ -27,12 +26,11 @@ export const TimeoutPopup = connect(mapStateToProps)((props:TimeoutPopupProps) =
     const { lineups, teams, timeLeft, dispatch } = props;
     const [teamId, setTeamId] = React.useState(lineups.find(a=>!!a.teamId)?.teamId);
     const [teamSelected, setTeamSelected] = React.useState(false);
-    const uiActions = getTimerPopupUiActions(dispatch);
     return !teamSelected ? <React.Fragment>
         <TeamSelect {...{teamId,teams:lineups.map(a => teams.get(a.teamId)),setTeamId}} />
         <button onClick={() => {
             setTeamSelected(true); 
-            timerHandler.setTimer(30);
+            timerHandler.setTimer(30, 'timeout-timer');
             dispatch(addTimeout(teamId));
         } }>OK</button>
         <button onClick={() => dispatch(closePopup())}>Cancel</button>
@@ -40,7 +38,11 @@ export const TimeoutPopup = connect(mapStateToProps)((props:TimeoutPopupProps) =
         <div>{ timeLeft }</div>
         <div>{ `Timeout - ${teams.get(teamId)?.abbrName}` }</div>
         <div>
-            { uiActions.map(a => <button key={a.name} onClick={ a.action }>{ a.name }</button>) }
+            <button onClick={ () => timerHandler.resetTimer() }>Reset</button>
+            <button onClick={ () => {
+                timerHandler.clearTimer();
+                dispatch(closePopup());
+            } }>Cancel</button>
         </div>
     </React.Fragment>
 });

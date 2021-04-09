@@ -1,5 +1,5 @@
 import { QuestionState, Team, Quizzer, Lineup, Seat, Score,
-    TeamId, QuizzerId, SeatId, SeatMap, PopupType } from '../../types';
+    TeamId, QuizzerId, SeatId, SeatMap, PopupType, Meet } from '../../types';
 import { RoundState } from './reducer'
 import { Map, List, Set } from 'immutable';
 import { createSelector } from '@reduxjs/toolkit';
@@ -7,6 +7,7 @@ import { createSelector } from '@reduxjs/toolkit';
 export const titleSelector = (state:RoundState):string => state.get('title') as string;
 export const questionSelector = (state:RoundState):number => state.get('question') as number;
 export const questionStateSelector = (state:RoundState):QuestionState => state.get('questionState') as QuestionState;
+export const meetsSelector = (state:RoundState):Map<string,Meet> => state.get('meets') as Map<string,Meet>;
 export const teamsSelector = (state:RoundState):Map<TeamId,Team> => state.get('teams') as Map<TeamId, Team>;
 export const quizzersSelector = (state:RoundState):Map<QuizzerId,Quizzer> => state.get('quizzers') as Map<QuizzerId, Quizzer>;
 export const lineupsSelector = (state:RoundState):List<Lineup> => state.get('lineups') as List<Lineup>;
@@ -14,7 +15,6 @@ export const defaultLineupsSelector = (state:RoundState):Map<TeamId,Lineup> => s
 export const seatsSelector = (state:RoundState):Map<SeatId,Seat> => state.get('seats') as Map<SeatId,Seat>;
 export const scoresSelector = (state:RoundState):List<Score> => state.get('scores') as List<Score>;
 export const jumpedSelector = (state:RoundState):Set<SeatId> => state.get('jumped') as Set<SeatId>;
-export const timerNameSelector = (state:RoundState):string => state.get('timerName') as string;
 export const timeLeftSelector = (state:RoundState):number => state.get('timeLeft') as number;
 export const seatMapsSelector = (state:RoundState):List<SeatMap> => state.get('bonusSeatMaps') as List<SeatMap>;
 export const showPopupSelector = (state:RoundState):PopupType => state.get('showPopup') as PopupType;
