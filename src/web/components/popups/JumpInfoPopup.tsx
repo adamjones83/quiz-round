@@ -1,9 +1,8 @@
 import * as React from 'react';
 import { answerInfoSelector, bonusInfoSelector, questionStateSelector, timeLeftSelector } from '../../redux/selectors';
-import { getSingleAnswerUiActions } from '../../ui-actions';
-import { jumpHandler } from '../../handlers';
-import { closePopup, nextQuestion, setQuestionState } from '../../redux/actions';
-import { QuestionState } from '../../../types';
+import { jumpHandler, timerHandler } from '../../handlers';
+import { addAnswered, closePopup, nextQuestion, setQuestionState } from '../../redux/actions';
+import { QuestionState, QuizzerId, TeamId } from '../../../types';
 import { connect } from 'react-redux';
 import { Dispatch } from 'redux';
 
@@ -31,18 +30,48 @@ function getSingleAnswerProps(props:JumpInfoPopupProps) {
     const bonus = props.questionState === 'bonus';
     const info = (bonus ? props.bonusInfo : props.answerInfo).get(0);
     return {
+        dispatch: props.dispatch,
         teamColor: info.color,
         quizzerName: info.name,
         timeLeft: props.timeLeft,
-        uiActions: getSingleAnswerUiActions(props.dispatch, info.teamId, info.quizzerId, bonus, props.timeLeft > 0)
-    }
+        teamId: info.teamId, 
+        quizzerId: info.quizzerId,
+        bonus
+    };
 }
+
+function answered(dispatch: Dispatch, teamId: TeamId, quizzerId: QuizzerId, bonus: boolean, correct: boolean) {
+    // add score, set question, set question state, clear jump handler
+    dispatch(addAnswered(teamId, quizzerId, correct, bonus));
+    if (correct || bonus) {
+        dispatch(nextQuestion());
+        dispatch(setQuestionState('before'));
+        timerHandler.clearTimer();
+        jumpHandler.clear();
+        dispatch(closePopup());
+    }
+    else dispatch(setQuestionState('bonus'));
+}
+
 const singleAnswererPopup = (props:ReturnType<typeof getSingleAnswerProps>) => {
-    return <div className={'jump-popup flex-column'} style={ { color: props.teamColor }}>
-        <div style={{flex:1}}>{ props.timeLeft }</div>
-        <div style={{flex:1}}>{ props.quizzerName }</div>
+    const { teamColor, quizzerName, timeLeft, teamId, quizzerId, bonus, dispatch } = props;
+    return <div className={'jump-popup flex-column'} style={ { color: teamColor }}>
+        <div style={{flex:1}}>{ timeLeft }</div>
+        <div style={{flex:1}}>{ quizzerName }</div>
         <div style={{flex:1}}>
-            { props.uiActions.map(a => <button key={ a.name } onClick={ a.action }>{ a.name }</button>) }
+            { timeLeft === 0 ?
+                <button onClick={ () => timerHandler.setTimer(3, 'jump-timer') }>Set</button> :
+                <button onClick={ () => timerHandler.resetTimer() }>Reset</button>
+            }
+            <button onClick={ () => timerHandler.clearTimer() }>Clear</button>
+            <button onClick={ () => answered(dispatch,teamId,quizzerId,bonus,true) }>Correct</button>
+            <button onClick={ () => answered(dispatch,teamId,quizzerId,bonus,false) }>Error</button>
+            <button onClick={ () => {
+                timerHandler.clearTimer();
+                jumpHandler.clear();
+                dispatch(setQuestionState('before'));
+                dispatch(closePopup());
+            } }>Cancel</button>
         </div>
     </div>
 }

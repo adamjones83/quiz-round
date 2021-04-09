@@ -12,7 +12,7 @@ export interface TimerHandler {
 function CreateTimerHandler(dispatch:Dispatch) {
     let expiresId = null;
     let updateId = null;
-    let initialTime = 0;
+    let initialSeconds = 0;
     let expiresTime:number = null;
     let timerType:TimerType = undefined;
 
@@ -32,11 +32,13 @@ function CreateTimerHandler(dispatch:Dispatch) {
         timerChangedInner();
     }
     const resetTimer = () => {
-        setTimer(initialTime, timerType);
+        if(expiresId) clearTimeout(expiresId);
+        if(updateId) clearInterval(updateId);
+        setTimer(initialSeconds, timerType);
     }
     const setTimer = (seconds:number, type:TimerType) => {
         timerType = type;
-        initialTime = 30;
+        initialSeconds = seconds;
         expiresTime = Date.now() + seconds * 1000;
         expiresId = setTimeout(() => { timerCompletedInner(); clearTimer(); }, seconds * 1000);
         updateId = setInterval(() => timerChangedInner(), 1000);

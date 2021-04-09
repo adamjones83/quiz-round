@@ -10,9 +10,10 @@ import {
 } from "../redux/selectors";
 import { Lineup, QuestionState } from "../../types";
 import { Dispatch } from "redux";
-import { getAppUiActions } from "../ui-actions";
 import { Popup } from './Popup';
 import { Sounds } from "./Sounds";
+import { jumpHandler } from "../handlers";
+import { closePopup, setQuestionState } from "../redux/actions";
 
 
 const mapStateToProps = (state) => ({
@@ -30,7 +31,7 @@ interface AppProps {
 }
 export const App = connect(mapStateToProps)((props: AppProps) => {
     const { title, lineups, question, questionState, dispatch } = props;
-    const uiActions = getAppUiActions(dispatch, questionState);
+    const isSet = questionState === 'jumpset';
     return (
         <div>
             <Popup />
@@ -55,11 +56,17 @@ export const App = connect(mapStateToProps)((props: AppProps) => {
                     ))}
                 </div>
                 <div className={"actions flex-row"}>
-                    {uiActions.map((a) => (
-                        <button key={a.name} onClick={a.action}>
-                            {a.name}
-                        </button>
-                    ))}
+                    { isSet ? 
+                        <button onClick={ () => { 
+                            jumpHandler.clear();
+                            dispatch(setQuestionState('before'));
+                            dispatch(closePopup());
+                        } }>Clear</button> :
+                        <button onClick={ () => { 
+                            jumpHandler.set(); 
+                            dispatch(setQuestionState('jumpset'))
+                        } }>Set</button>
+                    }
                 </div>
             </div>
         </div>
