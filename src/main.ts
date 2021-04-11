@@ -17,7 +17,13 @@ const menu = Menu.buildFromTemplate(template);
 Menu.setApplicationMenu(menu);
 
 // set up seat handling
-SeatHandler(seats => seatEvents.raiseEvent(seats), bogoLoops => console.log({ bogoLoops }));
+let disposeSeatHandler = SeatHandler(seats => seatEvents.raiseEvent(seats), bogoLoops => console.log({ bogoLoops }));
+menuEvents.addHandler(async name => {
+    if(name === 'edit-quizzers') {
+        (await disposeSeatHandler).dispose();
+        disposeSeatHandler = SeatHandler(seats => seatEvents.raiseEvent(seats), bogoLoops => console.log({ bogoLoops }));
+    }
+});
 
 // create the main window
 app.on("ready", () => {

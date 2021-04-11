@@ -3,7 +3,7 @@ export type MenuEventType =
 'restart-round' | 'set-round-title' | 'pick-lineups' | 'show-scores' | 
 'set-question' | 'timeout' | 'foul' | 'challenge' | 'appeal' |
 'bonus-handling-auto' | 'bonus-handling-manual'|'sound-enabled'|'sound-disabled'|
-'edit-quizzers'|'edit-teams'|'edit-meets'|'edit-sounds';
+'edit-quizzers'|'edit-teams'|'edit-meets'|'edit-sounds'|'reconnect-seats';
 export const SEAT_STATUS_EVENT = 'seat-status-update';
 export interface SeatStatus { id: string, jumped: boolean }
 

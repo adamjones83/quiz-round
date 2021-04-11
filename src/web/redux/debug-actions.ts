@@ -11,7 +11,13 @@ import {
     toggleSeatEnabled
 } from './actions';
 import { RoundState } from './reducer';
+import { toLookup } from '../utils';
+import { jumpHandler } from '../handlers';
 
+const seats = toLookup([...new Array(15)].map((_,a) => ({
+    id: getSeatId(Math.floor(a/5)+1, a%5+1),
+    jumped: false
+})), a => a.id);
 export function addDebugActions(getState:()=>RoundState,dispatch:Dispatch):void {
     const ACTIONS = {
         toggleShowLineups: () => dispatch(showPopup('lineups')),
@@ -29,6 +35,11 @@ export function addDebugActions(getState:()=>RoundState,dispatch:Dispatch):void 
         },
         showScores: () => {
             dispatch(showPopup('scores'));
+        },
+        jump: (teamNum:number, seatNum:number, jumped?:boolean) => {
+            const seatId = getSeatId(teamNum, seatNum);
+            seats[seatId] = { id:seatId, jumped: !!jumped };
+            jumpHandler.update(Object.values(seats));
         }
     };
     Object.assign(global, { ACTIONS });

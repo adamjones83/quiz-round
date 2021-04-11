@@ -34,6 +34,7 @@ function getQuizMenu(): (MenuItemConstructorOptions | MenuItem) {
             { type: 'separator' },
             appSubmenu('Edit Lineups', 'pick-lineups'),
             appSubmenu('Show Scores', 'show-scores'),
+            { type: 'separator' },
             {   
                 label: 'Bonus Handling',
                 toolTip: 'handling of bonus points such as 3rd person bonus',
@@ -66,7 +67,8 @@ function getQuizMenu(): (MenuItemConstructorOptions | MenuItem) {
                         click: () => menuEvents.raiseEvent('sound-disabled')
                     }
                 ]
-            }
+            },
+            appSubmenu('Reconnect Seats', 'reconnect-seats')
         ]
     }
 }

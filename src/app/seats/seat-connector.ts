@@ -1,5 +1,5 @@
+import * as fs from 'fs';
 import * as SerialPort from 'serialport';
-import { exec } from 'child_process';
 import { SeatStatus } from '../../ipc-types';
 
 /*  == HARDWARE EXPLANATION ==
@@ -8,14 +8,16 @@ import { SeatStatus } from '../../ipc-types';
     When sitting the circut is closed and the bit has the value 1
     Seat chains not connected are all set to high bits
 */
-export async function SeatHandler(onStatusChange:(seats:SeatStatus[])=>void, onBogo:(loops:number)=>void): Promise<void> {
-    const path = await getUsbPath();
-    const port = await connect(path);
+
+interface Disposable { dispose:() => void }
+export async function SeatHandler(onStatusChange:(seats:SeatStatus[])=>void, onBogo:(loops:number)=>void): Promise<Disposable> {
+    const path = await getUsbPathViaNode();
     if(!path) {
         onBogo(-1); 
         console.log('failed to connect to jump seats');
         return;
     }
+    const port = await connect(path);
     const readline = SerialPort.parsers.Readline;
     const parser = port.pipe(new readline({ delimiter: '\r\n' }))
     parser.on('data', (data:Buffer) => {
@@ -27,13 +29,19 @@ export async function SeatHandler(onStatusChange:(seats:SeatStatus[])=>void, onB
         }
     })
     port.on("error", err => console.error(err));
+    return { dispose: () => {
+        parser.destroy();
+        port.destroy();   
+    }}
 }
 
-function getUsbPath(): Promise<string> {
-    return new Promise<string>((res,rej) => exec('ls -1 /dev/cu.*usbmodem*', 
-        (err, stdout) => { if(err) rej(err); else res(stdout); }))
-        .then(stdout => stdout.split('\n')[0]);
+export async function getUsbPathViaNode(): Promise<string> {
+    const pattern = /cu*usbmodem/;
+    const readdir = path => new Promise<string[]>((res,rej) => fs.readdir(path, (err,data) => { if(err) rej(err); else res(data); }));
+    const usbModem = (await readdir('/dev')).find(name => pattern.test(name));
+    return usbModem && `/dev/${usbModem}`;
 }
+
 function connect(path:string) {
     return new Promise<SerialPort>((res,rej) => {
         const port = new SerialPort(path,{
