@@ -1,5 +1,5 @@
 import { updateQuizzers, updateTeams, updateLineups, getSeatId, setBonusSeatmaps, updateDefaultLineups, updateMeets } from './redux/actions';
-import { initJumpHandler, initTimerHandler, initMenuHandler } from './handlers';
+import { initJumpHandler, initTimerHandler, initMenuHandler, initSeatHandler } from './handlers';
 import { addDebugActions } from './redux/debug-actions';
 import { getDateStr, shuffle, toLookup } from './utils';
 import { hookupKeyboardJumps } from './keyboard-jumps';
@@ -22,6 +22,7 @@ export async function initialize(store: Store<RoundState>, client: QuizClient): 
     initJumpHandler(dispatch);
     initTimerHandler(dispatch);
     initMenuHandler(dispatch);
+    initSeatHandler();
 
     // load meets, quizzers, teams, default lineups
     const meets = toLookup([

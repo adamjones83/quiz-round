@@ -2,6 +2,7 @@ import { app, BrowserWindow, Menu, MenuItemConstructorOptions, MenuItem } from "
 import * as path from "path";
 import { getMacMenu } from './app/menu/mac-menu';
 import { getWindowsMenu } from './app/menu/windows-menu';
+import { SeatHandler } from './app/seats/seat-connector';
 import { MENU_EVENT, SEAT_STATUS_EVENT } from './ipc-types';
 import { menuEvents, seatEvents } from "./ipc-events";
 import './app/database/database-ipc-handler';
@@ -16,7 +17,7 @@ const menu = Menu.buildFromTemplate(template);
 Menu.setApplicationMenu(menu);
 
 // set up seat handling
-// SeatHandler(seats => seatEvents.raiseEvent(seats), bogoLoops => console.log({ bogoLoops }));
+SeatHandler(seats => seatEvents.raiseEvent(seats), bogoLoops => console.log({ bogoLoops }));
 
 // create the main window
 app.on("ready", () => {
@@ -29,9 +30,8 @@ app.on("ready", () => {
         }
     });
 
-    // emit menu events to ipcRenderer
+    // emit seat & menu events to ipcRenderer
     menuEvents.addHandler(menuEventType => mainWindow.webContents.send(MENU_EVENT, menuEventType));
-
     seatEvents.addHandler(seatStatuses => mainWindow.webContents.send(SEAT_STATUS_EVENT, seatStatuses));
 
     const mainWindowUrl = new URL(path.join(__dirname, 'mainWindow.html'), 'file://').toString();

@@ -1,5 +1,6 @@
 import * as SerialPort from 'serialport';
 import { exec } from 'child_process';
+import { SeatStatus } from '../../ipc-types';
 
 /*  == HARDWARE EXPLANATION ==
     Each seat has a bit in a four digit hex number
@@ -7,7 +8,6 @@ import { exec } from 'child_process';
     When sitting the circut is closed and the bit has the value 1
     Seat chains not connected are all set to high bits
 */
-interface SeatStatus { seatId:string, isJumped:boolean }
 export async function SeatHandler(onStatusChange:(seats:SeatStatus[])=>void, onBogo:(loops:number)=>void): Promise<void> {
     const path = await getUsbPath();
     const port = await connect(path);
@@ -52,15 +52,15 @@ const dataRegex = /^o=([0-9A-F]{1,4}) /;
 let prevStatusNum = 0;
 function updateStatuses(data:string, onStatusChange:(seats:SeatStatus[])=>void) {
     const statusUpdate = dataRegex.exec(data)?.[1];
-    const ffs = 'FFF'
-    const statusNum = parseInt(ffs.substr(0,4-statusUpdate.length) + statusUpdate, 16);
+    const statusNum = parseInt(statusUpdate, 16);
+    console.log({ statusUpdate, statusNum: statusNum.toString(16)})
     if(statusNum !== prevStatusNum) {
         prevStatusNum = statusNum;
         const statuses = getStatuses(statusNum);
         onStatusChange(statuses);
     }
 }
-function getStatuses(status:number) {
+function getStatuses(status:number):SeatStatus[] {
     const seatMapping = [
         0x4000, 0x2000, 0x1000, 0x0800, 0x0400,
         0x0200, 0x0100, 0x0080, 0x0040, 0x0020,
@@ -68,8 +68,8 @@ function getStatuses(status:number) {
     ];
 
     return seatMapping.map((a,i) => ({
-        seatId: `Team ${Math.floor(i/5) + 1} - Seat ${(i%5)+1}`,
-        isJumped: !(a & status)
+        id: `Team ${Math.floor(i/5)} - Seat ${i%5}`,
+        jumped: !(a & status)
     }));
 }
 

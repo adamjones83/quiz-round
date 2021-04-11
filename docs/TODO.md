@@ -1,35 +1,24 @@
 # TODO
-- menu items: 
-    * timeout, challenge, appeal, foul, show scores, select tournement
-    * set question number
-- Dialogs
-    * team/quizzer select dialog (for fouls, timeouts, ...)
-    * timeout dialog
-    * challenge/rebuttal/appeal dialog
-    * team, quizzer, meet input dialog
-- Windows
-    * audience view 
-        - hide actions
-        - optional mirrored team order
-        - toast (3 second) for fouls (and appeals if they don't use a timer)
-- Seats
-    * enabling/disabling seats
-    * testing
-    * proper close/dispose of seat?
-    * automatic reload on seat disconnect & reattach
-    * windows computer support
-    * UI click "jumping"
-- Round Flow
-    * state attributes - round start time, round id, meet id
-    * options to start round, restart round
-        - discard, save, or keep scores
-        - set the round start time
-    * set round title
-    * method for selecting quiz meet
-    * quiz outs, error outs, swapping quizzers, enable/disable seats
-    * quiz round ends & saving scores
-- Scores View
-    * manually add scores
+- edit meets, teams, quizzers
+- ability to disable seats
+- get "real" sample data
+- bonus scores & round flow
+- manually adding scores
+- color order: [green, blue, red]
+- quizzers disabled on quiz out & error out
+- challenge/appeal dialogs without timers
+- saving scores to database
+- style updates
+- support for Windows 10
+- audience view
+    - hide actions
+    - optional mirrored team order
+    - toast (3 second) for fouls (and appeals if they don't use a timer)
+- seats
+    - menu option to reconnect
+    - proper close/dispose of seat?
+    - automatic reload on seat disconnect & reattach?
+    - UI click "jumping"
 - UI/UX cleanup
     * consistent team ordering in dropdowns (by lineup when applicable, or alphabetical)
     * standardize 'Ok' text for buttons

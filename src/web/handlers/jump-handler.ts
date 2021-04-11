@@ -37,10 +37,10 @@ function CreateJumpHandler(dispatch: Dispatch): JumpHandler {
     }
     /** batch update of seat statuses */
     const update = (statuses:SeatStatus[]) => {
-        statuses.forEach(({id,jumped}) => {
-            if(!disabled[id]) {
-                if(jumped) jumped[id] = true;
-                else delete jumped[id];
+        statuses.forEach(a => {
+            if(!disabled[a.id]) {
+                if(a.jumped) jumped[a.id] = true;
+                else delete jumped[a.id];
             }
         });
         const jumpedIds = Object.keys(jumped);
