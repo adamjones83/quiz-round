@@ -23,6 +23,7 @@ export const roundIdSelector = (state:RoundState):string => state.get('roundId')
 export const meetIdSelector = (state:RoundState):string => state.get('meetId') as string;
 
 /* COMPOUND CUSTOM SELECTORS */
+export const lineupTeamsSelector = createSelector(lineupsSelector, teamsSelector, (lineups, teams) => lineups.map(a => teams.get(a.id)).filter(a => a));
 export const teamScoreSelector = createSelector(scoresSelector, teamsSelector,
     (scores, teams) => teams.reduce((lookup,team) => {
         lookup[team.id] = getTeamScore(scores.toArray(), team.id);
@@ -64,7 +65,7 @@ export const bonusInfoSelector = createSelector(jumpedSelector, seatsSelector, q
     })));
 export const scorePartsSelector = createSelector(roundIdSelector, meetIdSelector, questionSelector,
     (roundId, meetId, question) => ({roundId, meetId, question}));
-    
+
 function getTeamScore(scores:Score[], teamId:string) {
     return scores
         .filter(a => a.teamId === teamId)

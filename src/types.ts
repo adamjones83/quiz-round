@@ -5,7 +5,8 @@ export type QuestionState = 'before'|'jumpset'|'answer'|'bonus';
 export type ScoreType = '-unknown-'|'foul'|'2nd foul'|'timeout'|
     'overruled-challenge'|'upheld-challenge'|'overruled-appeal'|'upheld-appeal'|
     'correct'|'error'|'bonus-correct'|'bonus-error'|
-    'correct-quizout'|'error-out'|
+    'quizout /wo error'|'error-out'|
+    '2nd overruled challenge'|
     '5+ team error'|'error after 15'|
     '3rd person bonus'|'4th person bonus'|'5th person bonus';
 export type PopupType = 'none'|'restart-round'|'set-round-title'|'edit-quizzers'|

@@ -60,7 +60,7 @@ const singleAnswererPopup = (props:ReturnType<typeof getSingleAnswerProps>) => {
         <div style={{flex:1}}>{ quizzerName }</div>
         <div style={{flex:1}}>
             { timeLeft === 0 ?
-                <button onClick={ () => timerHandler.setTimer(3, 'jump-timer') }>Set</button> :
+                <button onClick={ () => timerHandler.setTimer(30, 'jump-timer') }>Set</button> :
                 <button onClick={ () => timerHandler.resetTimer() }>Reset</button>
             }
             <button onClick={ () => timerHandler.clearTimer() }>Clear</button>
